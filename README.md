@@ -2,7 +2,7 @@ Detection of the letter given the image by training a CNN on the [Hell-Date data
 
 # The Algorithm
 
-**Similarity-Weighted Supervised Contrastive Loss (SW-SCL)** for 2D image classification with CNNs, optionally using **Test-Time Augmentation (TTA)** for embeddings.
+The image classification method uses **Similarity-Weighted Supervised Contrastive Loss (SW-SCL)** for 2D image classification with CNNs, optionally using **Test-Time Augmentation (TTA)** for embeddings and **expert-defined class similarity priors**.
 
 ---
 
@@ -19,7 +19,7 @@ We aim to learn a **feature embedding function** $f_\theta: x \mapsto z \in \mat
 The standard **Supervised Contrastive Loss (SupCon)** for an anchor $i$ is:
 
 $$
-L_i^{\text{sup}} = - \frac{1}{|P(i)|} \sum_{p \in P(i)} \log \frac{\exp(z_i \cdot z_p / \tau)}{\sum_{a \neq i} \exp(z_i \cdot z_a / \tau)}
+L_i^{sup} = - \frac{1}{|P(i)|} \sum_{p \in P(i)} \log \frac{\exp(z_i \cdot z_p / \tau)}{\sum_{a \neq i} \exp(z_i \cdot z_a / \tau)}
 $$
 
 where:
@@ -47,29 +47,44 @@ where:
 The **Similarity-Weighted SupCon loss** is then:
 
 $$
-L_i^{\text{SW-SCL}} = - \frac{1}{|P(i)|} \sum_{p \in P(i)} 
-\log \frac{\exp(z_i \cdot z_p / \tau)}{\sum_{a \neq i} w_{ia} \, \exp(z_i \cdot z_a / \tau)}
+L_i^{SW-SCL} = - \frac{1}{|P(i)|} \sum_{p \in P(i)} 
+\log \frac{\exp(z_i \cdot z_p / \tau)}{\sum_{a \neq i} w_{ia}  \exp(z_i \cdot z_a / \tau)}
 $$
 
 The final batch loss is:
 
 $$
-L^{\text{SW-SCL}} = \frac{1}{B} \sum_{i=1}^{B} L_i^{\text{SW-SCL}}
+L^{SW-SCL} = \frac{1}{B} \sum_{i=1}^{B} L_i^{SW-SCL}
 $$
 
 ---
 
-## 4. Total Loss for Classification
+## 4. Expert Priors
 
-We combine the SW-SCL with standard **cross-entropy (CE) loss**:
+If **expert knowledge** about visual similarity of classes is available, we can define a prior matrix $S_{prior} \in [0,1]^{C \times C}$. The **final similarity matrix** used in SW-SCL is a blend:
 
-$$L = L_{\text{CE}} + \lambda_{\text{SCL}} \, L^{\text{SW-SCL}}$$
+$$
+S_{final} = (1 - \alpha_{prior}) S_{dynamic} + \alpha_{prior} S_{prior}
+$$
 
-- $\lambda_{\text{SCL}}$ controls the contribution of the contrastive term.  
+- $\alpha_{prior} \in [0,1]$ controls the contribution of the expert prior.  
+- Letters in the same visual group (e.g., straight lines, curves, triangles) have high similarity, others have low similarity.
 
 ---
 
-## 5. Test-Time Augmentation (TTA)
+## 5. Total Loss for Classification
+
+We combine the SW-SCL with standard **cross-entropy (CE) loss**:
+
+$$
+L = L_{CE} + \lambda_{SCL}  L^{SW-SCL}
+$$
+
+- $\lambda_{SCL}$ controls the contribution of the contrastive term.  
+
+---
+
+## 6. Test-Time Augmentation (TTA)
 
 To improve embedding quality, we optionally apply **TTA**. For each sample $x_i$, we generate $n$ augmented views $\{x_i^{(1)}, \dots, x_i^{(n)}\}$ and compute embeddings:
 
@@ -81,28 +96,47 @@ The SW-SCL is then computed over all augmented embeddings, effectively increasin
 
 ---
 
-## 6. Similarity Matrix Construction
+## 7. Similarity Matrix Construction
 
-We construct $S$ dynamically from **class prototypes**:
+We construct $S_{dynamic}$ dynamically from **class prototypes**:
 
 1. Compute embeddings for all training samples: $z_i = f_\theta(x_i)$.  
 2. Compute class prototypes:  
 
 $$
-\mu_c = \frac{1}{|C_c|} \sum_{i: y_i = c} z_i, \quad \hat{\mu}_c = \frac{\mu_c}{\|\mu_c\|_2}
+\mu_c = \frac{1}{|C_c|} \sum_{i: y_i = c} z_i, \quad \mu_c = \frac{\mu_c}{\| \mu_c \|_2}
 $$
 
 3. Compute pairwise cosine similarities and clamp to $[0,1]$:
 
 $$
-S_{c_1,c_2} = \max(0, \min(1, \mu_{c_1} \cdot \mu_{c_2})), \quad \text{with } S_{c,c}=0
+S_{c_1,c_2} = \max(0, \min(1, \mu_{c_1} \cdot \mu_{c_2})), \quad S_{c,c}=0
 $$
 
 Optionally, $S$ is **updated every few epochs** or smoothed with an **exponential moving average** for stability.
 
 ---
 
+## 8. Training Summary
+
+1. Forward batch through CNN to compute logits and embeddings.  
+2. Compute CE loss on logits.  
+3. Optionally apply TTA for embeddings.  
+4. Compute SW-SCL using the blended similarity matrix $S_{final}$.  
+5. Backpropagate combined loss:
+
+$$
+\text{Loss} = L_{CE} + \lambda_{SCL}  L^{SW-SCL}
+$$
+
+6. Update model parameters.  
+7. Periodically update $S_{dynamic}$ from prototypes.  
+8. Apply early stopping based on validation loss.
+
+---
+
 ## References
 
 - **Supervised Contrastive Learning**: [Khosla et al., NeurIPS 2020](https://arxiv.org/abs/2004.11362)  
-- **Similarity-Weighted Extension**: this repository
+- **Similarity-Weighted Extension with Expert Priors**: this repository
+
