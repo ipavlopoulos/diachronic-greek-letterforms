@@ -1,8 +1,8 @@
 Detection of the letter given the image by training a CNN on the [Hell-Date dataset](https://zenodo.org/records/15083590), which provides solid ground truth for palaeographic dating. The trained model detects and recognizes characters of cursive handwritten ancient Greek. This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (see the [licence file](./LICENSE) for details).
 
-# The Architecture
+# The Algorithm
 
-This repository implements **Similarity-Weighted Supervised Contrastive Loss (SW-SCL)** for 2D image classification with CNNs, optionally using **Test-Time Augmentation (TTA)** for embeddings.
+**Similarity-Weighted Supervised Contrastive Loss (SW-SCL)** for 2D image classification with CNNs, optionally using **Test-Time Augmentation (TTA)** for embeddings.
 
 ---
 
@@ -100,25 +100,6 @@ $$
 
 Optionally, $S$ is **updated every few epochs** or smoothed with an **exponential moving average** for stability.
 
----
-
-## 7. Training Summary
-
-1. Forward batch through CNN to compute logits and embeddings.  
-2. Compute CE loss on logits.  
-3. Optionally apply TTA for embeddings.  
-4. Compute SW-SCL using current similarity matrix $S$.  
-5. Backpropagate combined loss:
-
-$$
-\text{Loss} = L_{\text{CE}} + \lambda_{\text{SCL}} L^{\text{SW-SCL}}
-$$
-
-6. Update model parameters.  
-7. Periodically update similarity matrix $S$ from prototypes.  
-8. Apply early stopping based on validation loss.
-
----
 ---
 
 ## References
