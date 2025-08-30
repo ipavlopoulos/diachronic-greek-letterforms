@@ -1,0 +1,195 @@
+image_name,checklist,TM,Year post quem,Year ante quem,Production Nome (supposed),Function,subset,annotated
+TM56_BGU.3.994.jpg,BGU.3.994,56,-113,-113,Pathyrite,syngraphe,testset,yes
+TM60_P.Grenf.2.17.jpg,P.Grenf.2.17,60,-136,-136,Pathyrite?,cheirographon,trainingset,yes
+TM88_P.Lond.3.883.jpg,P.Lond.3.883,88,-88,-88,Pathyrite,syngraphe,trainingset,no
+TM127_BGU.3.999.jpg,BGU.3.999,127,-99,-99,Pathyrite,syngraphe,testset,yes
+TM128_BGU.3.1000.jpg,BGU.3.1000,128,-98,-98,Pathyrite,syngraphe,trainingset,yes
+TM131_P.Batav.6_frag.A.jpg,P.Batav.6,131,-109,-109,Pathyrite,syngraphe,trainingset,yes
+TM131_P.Batav.6_frag.B.jpg,P.Batav.6,131,-109,-109,Pathyrite,syngraphe,trainingset,yes
+TM144_BGU.3.992.jpg,BGU.3.992 = P.Erbstreit (2017) 1,144,-186,-186,Pathyrite,diagraphe,trainingset,yes
+TM215_P.Dryton.25_R.jpg,P.Dryton.25,215,-117,-117,Pathyrite,syngraphe,trainingset,yes
+TM215_P.Dryton.25_V.jpg,P.Dryton.25,215,-117,-117,Pathyrite,syngraphe,trainingset,yes
+TM242_BGU.3.997.jpg,BGU.3.997,242,-103,-103,Pathyrite,syngraphe,trainingset,yes
+TM243_BGU.3.998.jpg,BGU.3.998,243,-101,-101,Pathyrite,syngraphe,trainingset,yes
+TM244_P.Lond.3.1208.jpg,P.Lond.3.1208,244,-97,-97,Pathyrite,syngraphe,trainingset,no
+TM250_P.Dryton.37.jpg,P.Dryton.37,250,-139,-139,Pathyrite?,account,testset,yes
+TM253_P.Dryton.33_frag.Heid.jpg,P.Dryton.33,253,-136,-136,Pathyrite,"petition, hypomnematic",trainingset,yes
+TM253_P.Dryton.33_frag.London.jpg,P.Dryton.33,253,-136,-136,Pathyrite,"petition, hypomnematic",trainingset,yes
+TM254_P.Dryton.16_R.jpg,P.Dryton.16,254,-131,-131,Pathyrite,syngraphe,trainingset,yes
+TM254_P.Dryton.16_V.jpg,P.Dryton.16,254,-131,-131,Pathyrite,syngraphe,trainingset,no
+TM255_P.Dryton.17_frag.London.jpg,P.Dryton.17,255,-129,-129,Pathyrite,syngraphe,trainingset,yes
+TM255_P.Dryton.17_frag.Morgan.jpg,P.Dryton.17,255,-129,-129,Pathyrite,syngraphe,trainingset,yes
+TM257_P.Dryton.19_R.jpg,P.Dryton.19,257,-127,-127,Pathyrite,syngraphe,trainingset,yes
+TM257_P.Dryton.19_V.jpg,P.Dryton.19,257,-127,-127,Pathyrite,syngraphe,trainingset,yes
+TM258_P.Dryton.4.jpg,P.Dryton.4,258,-126,-126,Pathyrite,will,trainingset,no
+TM262_P.Grenf.1.38.jpg,P.Grenf.1.38,262,-170,-170,Pathyrite,"petition, hypomnematic",trainingset,yes
+TM283_P.Dryton.40.jpg,P.Dryton.40,283,-135,-135,Pathyrite?,account,trainingset,yes
+TM290_P.Dryton.36_R.jpg,P.Dryton.36,290,-130,-130,Pathyrite?,private letter,trainingset,yes
+TM290_P.Dryton.36_V.jpg,P.Dryton.36,290,-130,-130,Pathyrite?,private letter,trainingset,no
+TM503_P.Dryton.41.jpg,P.Dryton.41,503,-135,-135,Pathyrite?,account,testset,yes
+TM663_P.Cair.Zen.1.59001_frag.Cairo.jpg,P.Cair.Zen.1.59001,663,-274,-273,Memphite,"double document, syngraphe examartyros",trainingset,yes
+TM663_P.Cair.Zen.1.59001_frag.Florence.jpg,P.Cair.Zen.1.59001,663,-274,-273,Memphite,"double document, syngraphe examartyros",trainingset,yes
+TM665_P.Cair.Zen.1.59003.jpg,P.Cair.Zen.1.59003,665,-259,-259,Jordan,"double document, syngraphe examartyros",trainingset,yes
+TM818_P.Cair.Zen.2.59172.jpg,P.Cair.Zen.2.59172,818,-256,-255,Arsinoite?,business note,trainingset,yes
+TM834_P.Cair.Zen.2.59188.jpg,P.Cair.Zen.2.59188,834,-255,-255,Memphite?,business note,trainingset,yes
+TM905_P.Cair.Zen.2.59261.jpg,P.Cair.Zen.2.59261,905,-251,-250,Arsinoite?,business note,trainingset,yes
+TM945_P.Cair.Zen.3.59301.jpg,P.Cair.Zen.3.59301,945,-250,-250,?,business note,trainingset,yes
+TM951_P.Cair.Zen.3.59307.jpg,P.Cair.Zen.3.59307,951,-250,-250,Arsinoite?,business note,trainingset,yes
+TM1011_P.Cair.Zen.3.59368.jpg,P.Cair.Zen.3.59368,1011,-241,-241,Memphite?,business letter,trainingset,yes
+TM1137_P.Cair.Zen.3.59499_R.jpg,P.Cair.Zen.3.59499,1137,-255,-254,Arsinoite?,business note,testset,yes
+TM1137_P.Cair.Zen.3.59499_V.jpg,P.Cair.Zen.3.59499,1137,-255,-254,Arsinoite?,business note,testset,yes
+TM1509_P.Lond.7.1944_R.jpg,P.Lond.7.1944,1509,-257,-257,Athrybite?,business letter,trainingset,yes
+TM1509_P.Lond.7.1944_V.jpg,P.Lond.7.1944,1509,-257,-257,Athrybite?,business letter,trainingset,yes
+TM1511_P.Lond.7.1948_R.jpg,P.Lond.7.1948,1511,-257,-257,Palestina?,business letter,trainingset,yes
+TM1511_P.Lond.7.1948_V.jpg,P.Lond.7.1948,1511,-257,-257,Palestina?,business letter,trainingset,yes
+TM1516_P.Lond.7.1953_R.jpg,P.Lond.7.1953,1516,-257,-257,Arsinoite,order to pay,trainingset,yes
+TM1516_P.Lond.7.1953_V.jpg,P.Lond.7.1953,1516,-257,-257,Arsinoite,order to pay,trainingset,yes
+TM1518_P.Lond.7.1955.jpg,P.Lond.7.1955,1518,-257,-257,Arsinoite,non-royal enteuxis,trainingset,no
+TM1526_P.Lond.7.1963.jpg,P.Lond.7.1963,1526,-256,-256,Memphite?,"double document, receipt",trainingset,yes
+TM1527_P.Lond.7.1964_R.jpg,P.Lond.7.1964,1527,-256,-256,Arsinoite,business letter,trainingset,yes
+TM1527_P.Lond.7.1964_V.jpg,P.Lond.7.1964,1527,-256,-256,Arsinoite,business letter,trainingset,yes
+TM1536_P.Lond.7.1973_R.jpg,P.Lond.7.1973,1536,-254,-254,Memphite?,business letter,testset,yes
+TM1536_P.Lond.7.1973_V.jpg,P.Lond.7.1973,1536,-254,-254,Memphite?,business letter,testset,yes
+TM1539_P.Lond.7.1976.jpg,P.Lond.7.1976,1539,-253,-253,Arsinoite?,"petition, letter",testset,yes
+TM1568_P.Lond.7.2006_R.jpg,P.Lond.7.2006,1568,-248,-248,Arsinoite,business letter,trainingset,yes
+TM1568_P.Lond.7.2006_V.jpg,P.Lond.7.2006,1568,-248,-248,Arsinoite,business letter,trainingset,yes
+TM1570_P.Lond.7.2008_R.jpg,P.Lond.7.2008,1570,-247,-247,Arsinoite,business letter,trainingset,no
+TM1570_P.Lond.7.2008_V.jpg,P.Lond.7.2008,1570,-247,-247,Arsinoite,business letter,trainingset,yes
+TM1575_P.Lond.7.2013_R.jpg,P.Lond.7.2013,1575,-243,-243,Arsinoite,business letter,trainingset,yes
+TM1575_P.Lond.7.2013_V.jpg,P.Lond.7.2013,1575,-243,-243,Arsinoite,business letter,trainingset,yes
+TM1579_P.Lond.7.2017.jpg,P.Lond.7.2017,1579,-242,-241,Arsinoite?,business note,testset,yes
+TM1581_P.Lond.7.2019_R.jpg,P.Lond.7.2019,1581,-234,-234,Arsinoite,business letter,trainingset,no
+TM1581_P.Lond.7.2019_V.jpg,P.Lond.7.2019,1581,-234,-234,Arsinoite,business letter,trainingset,no
+TM1803_P.Col.4.90_lower.jpg,P.Col.4.90,1803,-244,-243,Arsinoite?,business note,trainingset,yes
+TM1803_P.Col.4.90_upper.jpg,P.Col.4.90,1803,-244,-243,Arsinoite?,business note,trainingset,yes
+TM1945_P.Mich.1.45.jpg,P.Mich.1.45,1945,-252,-251,Arsinoite?,business note,trainingset,yes
+TM2067_PSI.4.383.jpg,PSI.4.383,2067,-248,-247,Arsinoite,business letter,trainingset,no
+TM2089_PSI.4.406.jpg,PSI.4.406,2089,-260,-258,Palestina?,business note,trainingset,yes
+TM2133_PSI.5.510.jpg,PSI.5.510,2133,-253,-253,Herakleopolite or Arsinoite?,business note,trainingset,yes
+TM2379_P.Lond.7.1935.jpg,P.Lond.7.1935,2379,-257,-257,Alexandria?,business letter,trainingset,yes
+TM2383_P.Lond.7.1940.jpg,P.Lond.7.1940,2383,-257,-257,?,account,trainingset,no
+TM2482_P.Koeln.5.216.jpg,P.Köln.5.216,2482,-209,-209,Memphite,"petition, hypomnematic",trainingset,yes
+TM2801_SB.24.16162_GreekOnly.jpg,SB.24.16162,2801,-83,-83,Arsinoite,Registration note on Demotic contract,trainingset,yes
+TM2817_P.Hib.1.84a.jpg,P.Hib.1.84a,2817,-285,-284,Herakleopolite,"double document, syngraphe examartyros",trainingset,no
+TM2818_P.Hib.1.85.jpg,P.Hib.1.85,2818,-261,-261,Oxyrhynchite,syngraphe,trainingset,yes
+TM2821_P.Hib.1.92.jpg,P.Hib.1.92,2821,-264,-264,Oxyrhynchite,syngraphe,trainingset,yes
+TM2833_P.Hib.2.209.jpg,P.Hib.2.209,2833,-263,-263,Herakleopolite,"double document, receipt",trainingset,no
+TM2837_P.Koeln.3.144.jpg,P.Koeln.3.144,2837,-152,-152,Arsinoite,"double document, syngraphe",trainingset,yes
+TM3093_P.Dion.10.jpg,P.Dion.10,3093,-109,-109,Hermopolite,"petition, hypomnematic",trainingset,yes
+TM3094_P.Dion.11.jpg,P.Dion.11,3094,-109,-108,Hermopolite,"petition, hypomnematic",trainingset,yes
+TM3097_P.Dion.14_R.jpg,P.Dion.14,3097,-110,-110,Hermopolite,"double document, syngraphe examartyros",trainingset,yes
+TM3097_P.Dion.14_V.jpg,P.Dion.14,3097,-110,-110,Hermopolite,"double document, syngraphe examartyros",trainingset,yes
+TM3098_P.Dion.15_R.jpg,P.Dion.15,3098,-109,-109,Hermopolite,"double document, syngraphe examartyros",trainingset,yes
+TM3098_P.Dion.15_V.jpg,P.Dion.15,3098,-109,-109,Hermopolite,"double document, syngraphe examartyros",trainingset,yes
+TM3099_P.Dion.16_R.jpg,P.Dion.16,3099,-109,-109,Hermopolite,"double document, syngraphe examartyros",trainingset,yes
+TM3099_P.Dion.16_V.jpg,P.Dion.16,3099,-109,-109,Hermopolite,"double document, syngraphe examartyros",trainingset,yes
+TM3283_P.Enteux.6.jpg,P.Enteux.6,3283,-222,-222,Arsinoite,"petition, enteuxis",testset,yes
+TM3286_P.Enteux.9.jpg,P.Enteux.9,3286,-218,-218,Arsinoite,"petition, enteuxis",testset,yes
+TM3289_P.Enteux.12.jpg,P.Enteux.12,3289,-244,-244,Arsinoite,"petition, enteuxis",trainingset,yes
+TM3397_UPZ.1.6.jpg,UPZ.1.6,3397,-163,-163,Memphite,"petition, enteuxis",trainingset,yes
+TM3403_UPZ.1.12.jpg,UPZ.1.12,3403,-158,-158,Memphite,"petition, hypomnematic",trainingset,yes
+TM3404_UPZ.1.13.jpg,UPZ.1.13,3404,-158,-158,Memphite,"petition, hypomnematic",trainingset,no
+TM3409_UPZ.1.18.jpg,UPZ.1.18,3409,-163,-163,Memphite,"petition, enteuxis",trainingset,yes
+TM3415_UPZ.1.24.jpg,UPZ.1.24,3415,-162,-162,Memphite,"petition, hypomnematic",testset,yes
+TM3432_UPZ.1.41.jpg,UPZ.1.41,3432,-161,-160,Memphite,"petition, enteuxis",trainingset,yes
+TM3433_UPZ.1.42.jpg,UPZ.1.42,3433,-162,-162,Memphite,"petition, enteuxis",trainingset,yes
+TM3444_UPZ.1.53.jpg,UPZ.1.53,3444,-161,-161,Memphite,"petition, hypomnematic",trainingset,yes
+TM3563_P.Tor.Choach.12.01.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,yes
+TM3563_P.Tor.Choach.12.02.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,no
+TM3563_P.Tor.Choach.12.03.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,no
+TM3563_P.Tor.Choach.12.04.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,no
+TM3563_P.Tor.Choach.12.05.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,no
+TM3563_P.Tor.Choach.12.06.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,no
+TM3563_P.Tor.Choach.12.07.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,no
+TM3563_P.Tor.Choach.12.08.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,no
+TM3563_P.Tor.Choach.12.09.jpg,P.Tor.Choach.12,3563,-117,-117,Peri Thebas,proceedings,trainingset,no
+TM3593_P.Tor.Choach.4.jpg,P.Tor.Choach.4,3593,-111,-111,Peri Thebas?,"petition, hypomnematic",trainingset,yes
+TM3676_P.Tebt.1.40.jpg,P.Tebt.1.40,3676,-117,-117,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM3680_P.Tebt.1.44.jpg,P.Tebt.1.44,3680,-114,-113,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM3681_P.Tebt.1.45.jpg,P.Tebt.1.45,3681,-113,-112,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM3682_P.Tebt.1.46.jpg,P.Tebt.1.46,3682,-113,-112,Arsinoite,"petition, hypomnematic",testset,yes
+TM3686_P.Tebt.1.50.jpg,P.Tebt.1.50,3686,-112,-111,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM3689_P.Tebt.1.53.jpg,P.Tebt.1.53,3689,-110,-109,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM3740_P.Tebt.1.104.jpg,P.Tebt.1.104,3740,-92,-92,Arsinoite,"double document, syngraphe examartyros",trainingset,yes
+TM3745_P.Tebt.1.109.jpg,P.Tebt.1.109,3745,-93,-93,Arsinoite,"double document, syngraphe examartyros",trainingset,yes
+TM3987_BGU.14.2380_frag.A.jpg,BGU.14.2380,3987,-264,-264,Kynopolite,double document,trainingset,yes
+TM3987_BGU.14.2380_frag.B.jpg,BGU.14.2380,3987,-264,-264,Kynopolite,double document,trainingset,yes
+TM3997_BGU.14.2377.jpg,BGU.14.2377,3997,-35,-35,Herakleopolite,"double document, proceedings",trainingset,no
+TM4196_P.Genova.3.114.jpg,P.Genova.3.114,4196,-237,-237,Herakleopolite,naukleros receipt,trainingset,yes
+TM4344_SB.12.11061_frag.Hamburg.jpg,SB.12.11061,4344,-218,-218,Oxyrhynchite,syngraphe examartyros,trainingset,yes
+TM4820_BGU.8.1738.P.Bingen.53_frag.A.jpg,BGU.8.1738,4820,-72,-72,Herakleopolite,oath,trainingset,yes
+TM4820_BGU.8.1738.P.Bingen.53_frag.B.jpg,BGU.8.1738,4820,-72,-72,Herakleopolite,oath,trainingset,yes
+TM4844_BGU.20.2847.jpg,BGU.20.2847,4844,-49,-49,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM4900_BGU.8.1821.jpg,BGU.8.1821,4900,-57,-56,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM4907_BGU.8.1828.jpg,BGU.8.1828,4907,-52,-51,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM4911_BGU.8.1832.jpg,BGU.8.1832,4911,-51,-51,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM4912_BGU.8.1833.jpg,BGU.8.1833,4912,-51,-50,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM4927_BGU.8.1848.jpg,BGU.8.1848,4927,-47,-47,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM4932_BGU.8.1853.jpg,BGU.8.1853,4932,-46,-45,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM5132_SB.28.16855.jpg,SB.28.16855,5132,-167,-167,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM5253_P.Oxy.55.3777.jpg,P.Oxy.55.3777,5253,-57,-57,Oxyrhynchite,oath,trainingset,yes
+TM5255_P.Oxy.14.1629.jpg,P.Oxy.14.1629,5255,-44,-44,Oxyrhynchite,syngraphe,trainingset,yes
+TM5258_P.Oxy.14.1644_R.jpg,P.Oxy.14.1644,5258,-63,-62,Oxyrhynchite,syngraphe,trainingset,yes
+TM5258_P.Oxy.14.1644_V.jpg,P.Oxy.14.1644,5258,-63,-62,Oxyrhynchite,syngraphe,trainingset,yes
+TM5259_P.Oxy.49.3461.jpg,P.Oxy.49.3461,5259,-46,-46,Oxyrhynchite,note,trainingset,yes
+TM5287_P.Ryl.2.69.jpg,P.Ryl.2.69,5287,-34,-34,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM5291_P.Ryl.2.73.jpg,P.Ryl.2.73,5291,-32,-31,Arsinoite,receipt,trainingset,yes
+TM5553_BGU.3.1012.jpg,BGU.3.1012,5553,-170,-170,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM5579_PSI.10.1098.jpg,PSI.10.1098,5579,-51,-51,Arsinoite,"double document, syngraphe examartyros",trainingset,yes
+TM5697_SB.5.7532.jpg,SB.5.7532,5697,-74,-74,Arsinoite,"double document, syngraphe examartyros",trainingset,yes
+TM5699_SB.5.7609.jpg,SB.5.7609,5699,-47,-47,Herakleopolite,programma,trainingset,yes
+TM5836_P.Eleph.1.jpg,P.Eleph.1,5836,-310,-310,1st Upper Nome,"double document, syngraphe examartyros",trainingset,yes
+TM5837_P.Eleph.2.jpg,P.Eleph.2,5837,-284,-284,1st Upper Nome,"double document, syngraphe examartyros",trainingset,yes
+TM5838_P.Eleph.3.jpg,P.Eleph.3,5838,-282,-282,1st Upper Nome,"double document, syngraphe examartyros",trainingset,yes
+TM5842_P.Eleph.8.jpg,P.Eleph.8,5842,-224,-223,Apollonopolite,"report, hypomnematic",testset,yes
+TM5850_P.Eleph.17_R.jpg,P.Eleph.17,5850,-223,-223,Apollonopolite,offer,trainingset,yes
+TM5850_P.Eleph.17_V.jpg,P.Eleph.17,5850,-223,-223,Apollonopolite,offer,trainingset,yes
+TM5853_P.Eleph.20_R.jpg,P.Eleph.20,5853,-223,-222,Apollonopolite,offer,trainingset,yes
+TM5853_P.Eleph.20_V.jpg,P.Eleph.20,5853,-223,-222,Apollonopolite,offer,trainingset,yes
+TM7411_W.Chr.449.jpg,P.Petr.3.29a = W.Chr. 449,7411,-242,-242,Arsinoite,"official correspondance, letter",trainingset,yes
+TM7883_P.Sijp.45.jpg,P.Sijp.45,7883,-197,-197,?,"official correspondance, hypomnematic",trainingset,yes
+TM8337_P.Mich.3.173.jpg,P.Mich.3.173,8337,-169,-168,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM8771_P.Mich.18.777.jpg,P.Mich.18.777,8771,-193,-193,Arsinoite,offer,trainingset,yes
+TM8808_SB.24.16285.gif,SB.24.16285,8808,-202,-201,Arsinoite,"petition, hypomnematic",testset,yes
+TM9228_BGU.2.543.jpg,BGU.2.543,9228,-27,-27,Arsinoite,oath,trainingset,yes
+TM11315_P.Grenf.1.45.jpg,P.Grenf.1.45,11315,-19,-19,Arsinoite,declaration,trainingset,yes
+TM11316_P.Grenf.1.46.jpg,P.Grenf.1.46,11316,-18,-18,Arsinoite,declaration,trainingset,yes
+TM11515_P.Koeln.1.54.jpg,P.Koeln.1.54,11515,-4,-4,Arsinoite,diagraphe,trainingset,yes
+TM13019_P.Ryl.4.600.jpg,P.Ryl.4.600,13019,-8,-8,Arsinoite,offer to lease,trainingset,yes
+TM13542_P.Tebt.2.386_GreekOnly.jpg,P.Tebt.2.386,13542,-12,-12,Arsinoite,Registration note on Demotic contract,testset,yes
+TM14532_SB.14.11933.jpg,SB.14.11933,14532,-27,-27,Arsinoite,syngraphe,trainingset,yes
+TM17894_P.Wash.Univ.2.77_frag.Vienna.jpg,P.Wash.Univ.2.77,17894,-21,-21,Oxyrhynchite,"petition, hypomnematic",trainingset,yes
+TM17894_P.Wash.Univ.2.77_frag.Wash.jpg,P.Wash.Univ.2.77,17894,-21,-21,Oxyrhynchite,"petition, hypomnematic",trainingset,yes
+TM18497_BGU.4.1053.jpg,BGU.4.1053,18497,-13,-13,Alexandria,synchoresis,testset,yes
+TM18499_BGU.4.1055.jpg,BGU.4.1055,18499,-13,-13,Alexandria,synchoresis,trainingset,yes
+TM18503_BGU.4.1058.jpg,BGU.4.1058,18503,-13,-13,Alexandria,synchoresis,trainingset,yes
+TM18552_BGU.4.1111.jpg,BGU.4.1111,18552,-15,-15,Alexandria,synchoresis,trainingset,yes
+TM18560_BGU.4.1118.jpg,BGU.4.1118,18560,-22,-22,Alexandria,synchoresis,trainingset,yes
+TM18570_BGU.4.1127.jpg,BGU.4.1127,18570,-18,-18,Alexandria,synchoresis,trainingset,yes
+TM18592_BGU.4.1146.jpg,BGU.4.1146,18592,-19,-19,Alexandria,synchoresis,trainingset,yes
+TM23306_BGU.16.2583.jpg,BGU.16.2583,23306,-13,-13,Herakleopolite,"declaration, livestock",trainingset,yes
+TM41479_SB.24.16163_GreekOnly.jpg,SB.24.16163,41479,-67,-67,Arsinoite,Registration note on Demotic contract,trainingset,yes
+TM44603_P.Eleph.27a.jpg,P.Eleph.27a,44603,-223,-223,Apollonopolite,"petition, hypomnematic",trainingset,yes
+TM44617_P.Polit.Iud.1.jpg,P.Polit.Iud.1,44617,-135,-135,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM44623_P.Polit.Iud.7_R.jpg,P.Polit.Iud.7,44623,-135,-134,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM44623_P.Polit.Iud.7_V.jpg,P.Polit.Iud.7,44623,-135,-134,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM44624_P.Polit.Iud.8.jpg,P.Polit.Iud.8,44624,-133,-133,Oxyrhynchite or Herakleopolite?,"petition, hypomnematic",trainingset,yes
+TM44625_P.Polit.Iud.9.jpg,P.Polit.Iud.9,44625,-132,-132,Aphroditopolite or Arsinoite or Herakleopolite?,"petition, hypomnematic",trainingset,yes
+TM44722_P.Diosk.6.jpg,P.Diosk.6,44722,-146,-146,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM44733_P.Diosk.18.jpg,P.Diosk.18,44733,-145,-145,Herakleopolite,"double document, syngraphe examartyros",trainingset,yes
+TM58204_P.Dime.3.2_GreekOnly.jpg,P.Dime.3.2,58204,-8,-8,Arsinoite,Registration note on Demotic contract,trainingset,yes
+TM69805_BGU.18.2731.jpg,BGU.18.1.2731,69805,-87,-86,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM78025_P.Bingen.45.jpg,P.Bingen.45,78025,-33,-33,Alexandria,prostagma,trainingset,yes
+TM78357_P.Heid.7.394.jpg,P.Heid.7.394,78357,-214,-214,Memphite,"petition, hypomnematic",trainingset,yes
+TM112437_P.Oxy.71.4822.jpg,P.Oxy.71.4822,112437,-3,-3,Oxyrhynchite,"declaration, livestock",trainingset,yes
+TM121852_P.Sorb.3.70.jpg,P.Sorb.3.70,121852,-270,-270,Oxyrhynchite,syngraphe,trainingset,yes
+TM121853_P.Sorb.3.71.jpg,P.Sorb.3.71,121853,-268,-267,Oxyrhynchite,"double document, syngraphe examartyros",trainingset,yes
+TM130532_CPR.29.9_GreekOnly.jpg,CPR.29.9,130532,-42,-42,Arsinoite,Registration note on Demotic contract,trainingset,yes
+TM316242_P.Tarich.2.jpg,P.Tarich.2,316242,-189,-188,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM316244_P.Tarich.4a.jpg,P.Tarich.4a,316244,-188,-188,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM316254_P.Tarich.11.jpg,P.Tarich.11,316254,-185,-184,Arsinoite,"petition, hypomnematic",trainingset,yes
+TM703255_P.Vindob.inv.G.56637.jpg,P.Vindob.G.56637,703255,-190,-190,Herakleopolite,"petition, hypomnematic",trainingset,yes
+TM749316_GRBS.55.649.jpg,GRBS.55.649,749316,-3,-3,Arsinoite,"declaration, census",trainingset,yes
+TM977098_P.Koeln.Sarapion.1.jpg,P.Köln.Sarapion.1,977098,-190,-190,Memphite?,"petition, hypomnematic",trainingset,yes
+TM44878_P.Dryton.56.jpg,P.Dryton.56,44878,-100,-100,Pathyrite,tax receipt,trainingset,yes
+TM316241_P.Tarich.1.jpg,P.Tarich.1,316241,-189,-189,Arsinoite,"petition, hypomnematic",trainingset,yes
