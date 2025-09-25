@@ -1,8 +1,8 @@
-Detection of the letter given the image by training a CNN on the [Hell-Date dataset](https://zenodo.org/records/15083590), which provides solid ground truth for palaeographic dating. The trained model detects and recognizes characters of cursive handwritten ancient Greek. This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (see the [licence file](./LICENSE) for details).
+A visual study of handwritten letters and their evolution based on CNN embeddings. A curated subset of the [Hell-Date dataset](https://zenodo.org/records/15083590) is introduced, which provides solid ground truth for palaeographic dating. This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (see the [licence file](./LICENSE) for details).
 
 # The Algorithm
 
-The image classification method uses **Similarity-Weighted Supervised Contrastive Loss (SW-SCL)** for 2D image classification with CNNs, optionally using **Test-Time Augmentation (TTA)** for embeddings and **expert-defined class similarity priors**.
+The image classification classifier uses **Similarity-Weighted Supervised Contrastive Loss (SW-SCL)** for 2D image classification with CNNs, optionally using **Test-Time Augmentation (TTA)** for embeddings and **expert-defined class similarity priors**.
 
 ---
 
