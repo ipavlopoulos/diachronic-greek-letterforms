@@ -6,17 +6,16 @@ The image classification classifier uses **Similarity-Weighted Supervised Contra
 
 ---
 
-## 1. Problem Setup
+## Problem Setup
 
 Let $D = \{(x_i, y_i)\}_{i=1}^N$ be a labeled dataset, with $x_i \in \mathbb{R}^{C \times H \times W}$ and $y_i \in \{1, \dots, C\}$.  
-
 We aim to learn a **feature embedding function** $f_\theta: x \mapsto z \in \mathbb{R}^D$ such that embeddings of samples from the same class are close, and embeddings of samples from different classes are separated according to **class similarity**.
 
 ---
 
-## 2. Supervised Contrastive Loss
+## Supervised Contrastive Loss
 
-The standard **Supervised Contrastive Loss (SupCon)** for an anchor $i$ is:
+The standard **Supervised Contrastive Loss (SCL)** for an anchor $i$ is:
 
 $$
 L_i^{sup} = - \frac{1}{|P(i)|} \sum_{p \in P(i)} \log \frac{\exp(z_i \cdot z_p / \tau)}{\sum_{a \neq i} \exp(z_i \cdot z_a / \tau)}
@@ -30,9 +29,9 @@ where:
 
 ---
 
-## 3. Similarity-Weighted Negatives
+## Similarity-Weighted Negatives
 
-We extend SupCon by **weighting negatives** according to **class similarity**. Let $S \in [0,1]^{C \times C}$ be a precomputed class similarity matrix with zero diagonal. Then for negative pair $(i,a)$:
+We extend SCL by **weighting negatives** according to **class similarity**. Let $S \in [0,1]^{C \times C}$ be a precomputed class similarity matrix with zero diagonal. Then for negative pair $(i,a)$:
 
 $$
 w_{ia} = 1 + \lambda \frac{S_{y_i, y_a}}{\bar{S}}, \quad \text{for } y_i \neq y_a
@@ -44,7 +43,7 @@ where:
 - $\bar{S}$ is the mean off-diagonal similarity,  
 - $w_{ia} = 1$ for positives or diagonal entries.  
 
-The **Similarity-Weighted SupCon loss** is then:
+The **Similarity-Weighted SCL** is then:
 
 $$
 L_i^{SW-SCL} = - \frac{1}{|P(i)|} \sum_{p \in P(i)} 
@@ -59,7 +58,7 @@ $$
 
 ---
 
-## 4. Expert Priors
+## Expert Priors (Optional)
 
 If **expert knowledge** about visual similarity of classes is available, we can define a prior matrix $S_{prior} \in [0,1]^{C \times C}$. The **final similarity matrix** used in SW-SCL is a blend:
 
@@ -72,7 +71,7 @@ $$
 
 ---
 
-## 5. Total Loss for Classification
+## Total Loss for Classification
 
 We combine the SW-SCL with standard **cross-entropy (CE) loss**:
 
@@ -84,7 +83,7 @@ $$
 
 ---
 
-## 6. Test-Time Augmentation (TTA)
+## Test-Time Augmentation (Optional)
 
 To improve embedding quality, we optionally apply **TTA**. For each sample $x_i$, we generate $n$ augmented views $\{x_i^{(1)}, \dots, x_i^{(n)}\}$ and compute embeddings:
 
@@ -96,7 +95,7 @@ The SW-SCL is then computed over all augmented embeddings, effectively increasin
 
 ---
 
-## 7. Similarity Matrix Construction
+## Similarity Matrix Construction (Optional)
 
 We construct $S_{dynamic}$ dynamically from **class prototypes**:
 
@@ -117,7 +116,7 @@ Optionally, $S$ is **updated every few epochs** or smoothed with an **exponentia
 
 ---
 
-## 8. Training Summary
+## Training Summary
 
 1. Forward batch through CNN to compute logits and embeddings.  
 2. Compute CE loss on logits.  
@@ -137,6 +136,7 @@ $$
 
 ## References
 
-- **Supervised Contrastive Learning**: [Khosla et al., NeurIPS 2020](https://arxiv.org/abs/2004.11362)  
+- **Supervised Contrastive Learning**: The SCL loss we extend; see [this study published in NeurIPS](https://arxiv.org/abs/2004.11362)  
 - **Similarity-Weighted Extension with Expert Priors**: this repository
+- **fCNN** The fragmentation-based augmentation we improve; see [this study published in MACH](https://link.springer.com/article/10.1007/s10994-024-06589-w)
 
