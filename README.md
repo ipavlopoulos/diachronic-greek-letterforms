@@ -203,5 +203,3 @@ Pavlopoulos, J., Barbakos, S., Ferretti, L., Voulgarakis, D., Paparrigopoulou, A
   url       = {https://github.com/ipavlopoulos/diachronic-greek-letterforms}
 }
 ```
-
-Please replace the `note` field with the final year, pages, publisher, and DOI once the proceedings record is available.
