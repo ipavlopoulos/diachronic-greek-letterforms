@@ -194,3 +194,8 @@ cython_debug/
 .cursorindexingignore
 .ipynb_checkpoints
 anacoda_projects/
+
+# Local project notes and generated demo outputs
+CHECKLIST.md
+.DS_Store
+representation_demo_output.csv
