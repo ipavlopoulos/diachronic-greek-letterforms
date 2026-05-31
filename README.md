@@ -52,6 +52,7 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `notebooks/Inference.ipynb` | Minimal classification example with the saved model. |
 | `notebooks/cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
 | `notebooks/resnet_training.ipynb` | ResNet-18 training workflow that regenerates `best_resnet_supcon_model.pth` from the released Hell-Char data. |
+| `notebooks/resnet18_pt_ft_standard_scl.ipynb` | ResNet18-PT+FT training workflow using standard supervised contrastive loss, without LF augmentation or DSCL weighting. |
 | `notebooks/cnn_embeddings_clustering.ipynb` | Larger exploratory notebook for embedding extraction and clustering experiments. |
 | `notebooks/data_overview.ipynb` | Quick data inventory notebook for released metadata and cliplet folders. |
 | `data/hellchar` | Hell-Char metadata and cliplets for training and in-distribution evaluation. |
@@ -151,6 +152,12 @@ Hell-Char split, lacuna-style augmentation, similarity-weighted supervised
 contrastive objective, and evaluation function, then saves
 `best_resnet_supcon_model.pth`. The ResNet checkpoint is not included in the
 repository, so this notebook is the reproducible path for regenerating it.
+
+For the ResNet18-PT+FT baseline with standard SCL only, use
+`notebooks/resnet18_pt_ft_standard_scl.ipynb`. This notebook fine-tunes all
+pretrained ResNet-18 layers with cross-entropy plus standard supervised
+contrastive loss, while deliberately disabling LF augmentation and DSCL
+class-similarity weighting.
 
 ## Method Summary
 
