@@ -14,8 +14,13 @@ from PIL import Image
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix
-import matplotlib.pyplot as plt
-import seaborn as sns
+
+
+LETTER_LABELS = [
+    "Alpha", "Beta", "Chi", "Delta", "Epsilon", "Eta", "Gamma", "Iota",
+    "Kappa", "Lambda", "Mu", "Nu", "Omega", "Omicron", "Phi", "Pi",
+    "Psi", "Rho", "Sigma", "Tau", "Theta", "Upsilon", "Xi", "Zeta",
+]
 
 
 class SupConLoss(nn.Module):
@@ -316,6 +321,9 @@ def train_cnn2d(model, train_loader, val_loader, device,
     return train_losses, val_losses, val_accuracies
 
 def evaluate(model, test_loader, device, label_encoder):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
     model.eval()
     correct = 0
     total = 0
@@ -453,6 +461,88 @@ test_transform = transforms.Compose([
     transforms.ToTensor(), # Adds channel dimension
     transforms.Normalize((0.5,), (0.5,))
 ])
+
+
+def load_letterform_model(checkpoint_path='best_cnn_letter_model.pth',
+                          device=None,
+                          num_classes=None,
+                          image_size=(64, 64)):
+    """
+    Load the released CNN2D checkpoint used for classification and representation extraction.
+    """
+    if device is None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    else:
+        device = torch.device(device)
+
+    if num_classes is None:
+        num_classes = len(LETTER_LABELS)
+
+    model = CNN2D(num_classes=num_classes, image_size=image_size).to(device)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+    state_dict = checkpoint.get("state_dict", checkpoint) if isinstance(checkpoint, dict) else checkpoint
+    model.load_state_dict(state_dict)
+    model.eval()
+    return model
+
+
+def image_path_to_tensor(image_path, size=(64, 64), otsu=False, device=None):
+    """
+    Preprocess one cliplet path into the normalized tensor expected by CNN2D.
+    """
+    image = preprocess_image_2d(image_path, size=size, otsu=otsu)
+    image = Image.fromarray((image * 255).astype(np.uint8))
+    tensor = test_transform(image).unsqueeze(0)
+    if device is not None:
+        tensor = tensor.to(device)
+    return tensor
+
+
+def extract_letterform_representations(model,
+                                       image_paths,
+                                       device=None,
+                                       batch_size=64,
+                                       normalize=True,
+                                       return_logits=False):
+    """
+    Extract 512-dimensional letterform representations for one or more cliplet paths.
+
+    Returns a NumPy array of shape [n_images, 512]. If return_logits=True, returns
+    (embeddings, logits), where logits has shape [n_images, num_classes].
+    """
+    if isinstance(image_paths, (str, os.PathLike)):
+        image_paths = [image_paths]
+    if not image_paths:
+        raise ValueError("image_paths must contain at least one image path.")
+
+    if device is None:
+        device = next(model.parameters()).device
+    else:
+        device = torch.device(device)
+
+    embeddings = []
+    logits = []
+    model.eval()
+    with torch.no_grad():
+        for start in range(0, len(image_paths), batch_size):
+            batch_paths = image_paths[start:start + batch_size]
+            batch = torch.cat(
+                [image_path_to_tensor(path, device=device) for path in batch_paths],
+                dim=0
+            )
+            batch_embeddings = model.get_embeddings(batch)
+            if normalize:
+                batch_embeddings = F.normalize(batch_embeddings, dim=1)
+            embeddings.append(batch_embeddings.cpu())
+
+            if return_logits:
+                logits.append(model(batch).cpu())
+
+    embeddings = torch.cat(embeddings, dim=0).numpy()
+    if return_logits:
+        logits = torch.cat(logits, dim=0).numpy()
+        return embeddings, logits
+    return embeddings
 
 # TTA/augmentation for embeddings
 tta_transform = transforms.Compose([

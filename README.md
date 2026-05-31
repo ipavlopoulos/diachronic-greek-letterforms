@@ -7,7 +7,7 @@ This repository contains data, notebooks, reusable PyTorch code, and a saved lig
 If you are working from the parent workspace, the actual project is nested here:
 
 ```bash
-cd greek-letter-vision
+cd diachronic-greek-letterforms
 ```
 
 Most notebooks and paths assume this directory is the current working directory.
@@ -15,10 +15,12 @@ Most notebooks and paths assume this directory is the current working directory.
 ## What Is Included
 
 - `source.py`: shared model, loss, augmentation, dataset, training, and evaluation code.
+- `extract_representations.py`: CSV exporter for the released 512-dimensional letterform representations.
+- `representation_demo.ipynb`: small notebook for loading the released checkpoint, extracting representations, and inspecting nearest neighbors.
 - `cnn_training.ipynb`: main training workflow for the lightweight CNN with similarity-weighted supervised contrastive learning.
 - `cnn_embeddings_clustering.ipynb`: embedding extraction and clustering experiments.
 - `Inference.ipynb`: minimal saved-model inference example.
-- `best_cnn_letter_model.pth`: saved `CNN2D` weights for quick inference.
+- `best_cnn_letter_model.pth`: saved `CNN2D` weights for quick inference and representation extraction.
 - `data/hellchar`: Hell-Char metadata and cliplets, used for training and in-distribution evaluation.
 - `data/palitchar`: PaLit-Char metadata and cliplets, used as a near-time out-of-distribution evaluation set.
 - `data/medchar`: Med-Char metadata and cliplets, used as a later-time out-of-distribution evaluation set.
@@ -58,6 +60,29 @@ model = CNN2D(num_classes=24, image_size=(64, 64)).to(device)
 model.load_state_dict(torch.load("best_cnn_letter_model.pth", map_location=device))
 model.eval()
 ```
+
+## Representation Extraction
+
+The released checkpoint can also be used as a transparent letterform encoder. The helper below returns L2-normalized 512-dimensional representations from the penultimate CNN layer:
+
+```python
+from source import extract_letterform_representations, load_letterform_model
+
+model = load_letterform_model("best_cnn_letter_model.pth")
+embeddings, logits = extract_letterform_representations(
+    model,
+    ["data/palitchar/cliplets/Alpha_10352_001.jpg"],
+    return_logits=True,
+)
+```
+
+To export representations for a directory of cliplets:
+
+```bash
+python extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
+```
+
+For an interactive walkthrough, open `representation_demo.ipynb`.
 
 ## Training Workflow
 
