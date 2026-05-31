@@ -23,9 +23,13 @@ pip install torch torchvision numpy opencv-python pillow scikit-learn matplotlib
 
 Then open the representation demo:
 
+[![Open `representation_demo.ipynb` in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ipavlopoulos/diachronic-greek-letterforms/blob/main/representation_demo.ipynb)
+
 ```bash
 jupyter notebook representation_demo.ipynb
 ```
+
+GitHub's notebook preview is static; use Colab or local Jupyter to run the upload cell and recompute outputs.
 
 Or export embeddings for a directory of cliplets:
 
