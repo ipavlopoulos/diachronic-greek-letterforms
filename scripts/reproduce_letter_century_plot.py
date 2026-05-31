@@ -53,15 +53,13 @@ def extract_embeddings(model, paths, device, batch_size):
     return np.vstack(embeddings)
 
 
-def make_thumbnail_data_uri(path, size, century):
-    img = Image.open(path).convert("L")
+def make_thumbnail_data_uri(path, size):
+    img = Image.open(path).convert("RGB")
     img = ImageOps.contain(img, (size, size))
-    canvas = Image.new("L", (size, size), 255)
+    canvas = Image.new("RGB", (size, size), "#ffffff")
     canvas.paste(img, ((size - img.width) // 2, (size - img.height) // 2))
-    color = CENTURY_COLORS.get(int(century), "#a50f15")
-    rgb = ImageOps.colorize(canvas, black=color, white="#ffffff")
     handle = io.BytesIO()
-    rgb.save(handle, format="PNG", optimize=True)
+    canvas.save(handle, format="PNG", optimize=True)
     encoded = base64.b64encode(handle.getvalue()).decode("ascii")
     return f"data:image/png;base64,{encoded}"
 
@@ -194,7 +192,7 @@ def make_svg(df, points, prototypes, output_svg, width, height, margin, thumb_si
         color = CENTURY_COLORS.get(proto["century"], "#666666")
         label = f'{proto["letter"]} {proto["century"]}c'
         image_y = y + label_height + 4
-        data_uri = make_thumbnail_data_uri(proto["path"], thumb_size, proto["century"])
+        data_uri = make_thumbnail_data_uri(proto["path"], thumb_size)
         elements.append(f'<line x1="{anchor_x:.2f}" y1="{anchor_y:.2f}" x2="{center_x:.2f}" y2="{center_y:.2f}" class="leader"/>')
         elements.append(f'<circle cx="{anchor_x:.2f}" cy="{anchor_y:.2f}" r="5.5" fill="{color}" opacity="0.92" stroke="#fff" stroke-width="0.6"/>')
         elements.append(f'<rect x="{x:.2f}" y="{y:.2f}" width="{thumb_size:.2f}" height="{label_height:.2f}" class="label-bg" stroke="{color}"/>')
@@ -230,7 +228,7 @@ def make_html(svg_path, html_path):
 <body>
   <header>
     <strong>Med-Char Letter-Century Plot</strong>
-    <p>Fixed-size century-coloured prototype thumbnails; earlier centuries use darker reds.</p>
+    <p>Fixed-size colour prototype thumbnails; marker colours use darker reds for earlier centuries.</p>
   </header>
   <main>
     <div class="figure">{svg}</div>
