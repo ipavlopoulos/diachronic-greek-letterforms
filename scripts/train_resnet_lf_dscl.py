@@ -52,18 +52,14 @@ def preprocess_image_2d(image_path, size=(64, 64), otsu=False):
 
 def load_hellchar(data_dir):
     cliplet_dir = data_dir / "hellchar" / "cliplets"
-    metadata_path = data_dir / "hellchar" / "hellchar.csv"
     image_paths = sorted(
         path for path in cliplet_dir.iterdir()
         if path.suffix.lower() in {".jpg", ".jpeg", ".png"}
     )
-    metadata = pd.read_csv(metadata_path)
     data = pd.DataFrame({"path": image_paths, "filename": [path.name for path in image_paths]})
     data["letter"] = data.filename.apply(lambda x: x.split("_")[0])
     data["TM"] = data.filename.apply(lambda x: int(x.split("_")[1]))
     data["number"] = data.filename.apply(lambda x: x.split("_")[2].split(".")[0])
-    data["year"] = data.TM.apply(lambda x: metadata.loc[metadata["TM"] == x]["Year ante quem"].values[0])
-    data["region"] = data.TM.apply(lambda x: metadata.loc[metadata["TM"] == x]["Production Nome (supposed)"].values[0])
     return data
 
 
