@@ -34,7 +34,7 @@ GitHub's notebook preview is static and may occasionally show a rendering error 
 Or export embeddings for a directory of cliplets:
 
 ```bash
-python extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
+python scripts/extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
 ```
 
 For GPU training, install the PyTorch build appropriate for your CUDA version from the official PyTorch instructions. The released checkpoint and demo run on CPU.
@@ -45,8 +45,8 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | --- | --- |
 | `source.py` | Shared model definitions, losses, augmentation, datasets, training, evaluation, and representation helpers. |
 | `best_cnn_letter_model.pth` | Released `CNN2D` checkpoint for classification and representation extraction. |
-| `extract_representations.py` | Command-line CSV exporter for 512-dimensional letterform representations. |
-| `create_qualitative_examples.py` | Recreates the compact visual panel showing augmentation, confusability, cross-dataset Gamma examples, and visual variability. |
+| `scripts/extract_representations.py` | Command-line CSV exporter for 512-dimensional letterform representations. |
+| `scripts/create_qualitative_examples.py` | Recreates the compact visual panel showing augmentation, confusability, cross-dataset Gamma examples, and visual variability. |
 | `notebooks/representation_demo.ipynb` | Small guided notebook for loading the checkpoint, previewing a cliplet, extracting representations, inspecting nearest neighbors, and trying a user-uploaded image. |
 | `notebooks/Inference.ipynb` | Minimal classification example with the saved model. |
 | `notebooks/cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
@@ -87,7 +87,7 @@ print(embeddings.shape)  # (1, 512)
 CSV export example:
 
 ```bash
-python extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
+python scripts/extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
 ```
 
 The CSV contains:
@@ -167,7 +167,7 @@ The augmentation pipeline includes ordinary image perturbations and a lacunae-in
 The qualitative visual panel can be regenerated from the released cliplets:
 
 ```bash
-python create_qualitative_examples.py
+python scripts/create_qualitative_examples.py
 ```
 
 It writes `visual_artifacts/qualitative_visual_examples.png`, showing side-by-side augmentation examples, confusable forms, Gamma across datasets, and representative background/degradation variability.
@@ -205,7 +205,7 @@ Full manuscript pages should be segmented into individual letter crops before us
 
 This is a research release, not a packaged Python library. The notebooks are the primary workflows, and `source.py` collects reusable components exported from those notebooks.
 
-Generated files such as `representation_demo_output.csv` are intentionally not required for running the project; they can be recreated from the demo notebook or `extract_representations.py`.
+Generated files such as `representation_demo_output.csv` are intentionally not required for running the project; they can be recreated from the demo notebook or `scripts/extract_representations.py`.
 
 ## Citation
 

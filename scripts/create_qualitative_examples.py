@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 PAPER_IMG_DIR = ROOT.parent / "paper" / "imgs"
 ARTIFACT_DIR = ROOT / "visual_artifacts"
 
