@@ -58,7 +58,7 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `data/palitchar` | PaLit-Char metadata and cliplets for near-period out-of-distribution evaluation. |
 | `data/medchar` | Med-Char metadata and cliplets for later-period diachronic evaluation. |
 | `visual_artifacts/qualitative_visual_examples.png` | Generated qualitative panel used to illustrate visual challenges and examples. |
-| `visual_artifacts/letter_century_plot_resnet_reproduced.svg` | Recreated letter-century plot with fixed-size prototype thumbnails. |
+| `visual_artifacts/letter_century_plot_resnet_reproduced.svg` | Recreated letter-century plot with fixed-size, century-coloured prototype thumbnails. |
 | `visual_artifacts/letter_century_plot_resnet_reproduced.html` | Browser-viewable version of the recreated letter-century plot. |
 
 ## Representation Extraction
@@ -184,8 +184,8 @@ python scripts/reproduce_letter_century_plot.py --device cpu
 
 It writes `visual_artifacts/letter_century_plot_resnet_reproduced.svg` and
 `visual_artifacts/letter_century_plot_resnet_reproduced.html`. All prototype
-thumbnails use the same image scale, and labels are offset with leader lines so
-that the annotations remain visible.
+thumbnails use the same image scale, labels are offset with leader lines, and
+centuries are shown with a red colour scale where older examples are darker.
 
 ## Data
 

@@ -32,12 +32,12 @@ LETTER_ORDER = [
 
 
 CENTURY_COLORS = {
-    9: "#7b3294",
-    10: "#008837",
-    11: "#1f78b4",
-    12: "#e66101",
-    13: "#d01c8b",
-    14: "#5e3c99",
+    9: "#67000d",
+    10: "#a50f15",
+    11: "#cb181d",
+    12: "#ef3b2c",
+    13: "#fb6a4a",
+    14: "#fc9272",
 }
 
 
@@ -53,12 +53,13 @@ def extract_embeddings(model, paths, device, batch_size):
     return np.vstack(embeddings)
 
 
-def make_thumbnail_data_uri(path, size):
+def make_thumbnail_data_uri(path, size, century):
     img = Image.open(path).convert("L")
     img = ImageOps.contain(img, (size, size))
     canvas = Image.new("L", (size, size), 255)
     canvas.paste(img, ((size - img.width) // 2, (size - img.height) // 2))
-    rgb = ImageOps.colorize(canvas, black="#111111", white="#ffffff")
+    color = CENTURY_COLORS.get(int(century), "#a50f15")
+    rgb = ImageOps.colorize(canvas, black=color, white="#ffffff")
     handle = io.BytesIO()
     rgb.save(handle, format="PNG", optimize=True)
     encoded = base64.b64encode(handle.getvalue()).decode("ascii")
@@ -148,18 +149,18 @@ def svg_text(x, y, text, **attrs):
 
 
 def make_svg(df, points, prototypes, output_svg, width, height, margin, thumb_size):
-    label_height = 15
+    label_height = 16
     boxes = layout_boxes(prototypes, width, height, margin, thumb_size, label_height)
     elements = []
     elements.append(f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">')
     elements.append("<style>")
     elements.append("""
         .axis { stroke: #d4d4d4; stroke-width: 1; }
-        .point { opacity: 0.32; }
-        .leader { stroke: #777; stroke-width: 0.65; opacity: 0.45; }
-        .thumb-frame { fill: #fff; stroke: #333; stroke-width: 0.7; rx: 2; }
+        .point { opacity: 0.46; stroke: #fff; stroke-width: 0.35; }
+        .leader { stroke: #777; stroke-width: 0.75; opacity: 0.50; }
+        .thumb-frame { fill: #fff; stroke: #333; stroke-width: 0.85; rx: 2; }
         .label-bg { fill: #fff; stroke: #bbb; stroke-width: 0.4; opacity: 0.95; }
-        .label { font-family: Arial, Helvetica, sans-serif; font-size: 9.5px; font-weight: 700; fill: #111; text-anchor: middle; }
+        .label { font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: 700; fill: #111; text-anchor: middle; }
         .small-label { font-family: Arial, Helvetica, sans-serif; font-size: 12px; fill: #333; }
         .title { font-family: Arial, Helvetica, sans-serif; font-size: 22px; font-weight: 700; fill: #111; text-anchor: middle; }
     """)
@@ -174,14 +175,15 @@ def make_svg(df, points, prototypes, output_svg, width, height, margin, thumb_si
         color = CENTURY_COLORS.get(int(century), "#666666")
         for idx in subset.index:
             x, y = points[idx]
-            elements.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="3.0" fill="{color}" class="point"><title>{html.escape(df.loc[idx, "letter"])} {int(df.loc[idx, "year"])}</title></circle>')
+            elements.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="4.2" fill="{color}" class="point"><title>{html.escape(df.loc[idx, "letter"])} {int(df.loc[idx, "year"])}</title></circle>')
 
     legend_x = width - margin + 18
-    legend_y = margin + 16
+    legend_y = margin + 28
+    elements.append(svg_text(legend_x - 5, legend_y - 18, "older = darker", class_="small-label"))
     for k, century in enumerate(sorted(df["century"].unique())):
         y = legend_y + k * 22
         color = CENTURY_COLORS.get(int(century), "#666666")
-        elements.append(f'<circle cx="{legend_x}" cy="{y}" r="5" fill="{color}" opacity="0.75"/>')
+        elements.append(f'<circle cx="{legend_x}" cy="{y}" r="6.2" fill="{color}" opacity="0.90" stroke="#fff" stroke-width="0.5"/>')
         elements.append(svg_text(legend_x + 12, y + 4, f"{int(century)}th c.", class_="small-label"))
 
     for proto, box in zip(prototypes, boxes):
@@ -192,12 +194,12 @@ def make_svg(df, points, prototypes, output_svg, width, height, margin, thumb_si
         color = CENTURY_COLORS.get(proto["century"], "#666666")
         label = f'{proto["letter"]} {proto["century"]}c'
         image_y = y + label_height + 4
-        data_uri = make_thumbnail_data_uri(proto["path"], thumb_size)
+        data_uri = make_thumbnail_data_uri(proto["path"], thumb_size, proto["century"])
         elements.append(f'<line x1="{anchor_x:.2f}" y1="{anchor_y:.2f}" x2="{center_x:.2f}" y2="{center_y:.2f}" class="leader"/>')
-        elements.append(f'<circle cx="{anchor_x:.2f}" cy="{anchor_y:.2f}" r="4.1" fill="{color}" opacity="0.85"/>')
-        elements.append(f'<rect x="{x:.2f}" y="{y:.2f}" width="{thumb_size:.2f}" height="{label_height:.2f}" class="label-bg"/>')
-        elements.append(svg_text(x + thumb_size / 2, y + 11, label, class_="label"))
-        elements.append(f'<rect x="{x:.2f}" y="{image_y:.2f}" width="{thumb_size:.2f}" height="{thumb_size:.2f}" class="thumb-frame"/>')
+        elements.append(f'<circle cx="{anchor_x:.2f}" cy="{anchor_y:.2f}" r="5.5" fill="{color}" opacity="0.92" stroke="#fff" stroke-width="0.6"/>')
+        elements.append(f'<rect x="{x:.2f}" y="{y:.2f}" width="{thumb_size:.2f}" height="{label_height:.2f}" class="label-bg" stroke="{color}"/>')
+        elements.append(svg_text(x + thumb_size / 2, y + 11.7, label, class_="label"))
+        elements.append(f'<rect x="{x:.2f}" y="{image_y:.2f}" width="{thumb_size:.2f}" height="{thumb_size:.2f}" class="thumb-frame" stroke="{color}"/>')
         elements.append(f'<image x="{x:.2f}" y="{image_y:.2f}" width="{thumb_size:.2f}" height="{thumb_size:.2f}" href="{data_uri}">')
         elements.append(f'<title>{html.escape(proto["filename"])}; year {proto["year"]}</title>')
         elements.append("</image>")
@@ -228,7 +230,7 @@ def make_html(svg_path, html_path):
 <body>
   <header>
     <strong>Med-Char Letter-Century Plot</strong>
-    <p>Fixed-size prototype thumbnails; labels are offset with leader lines for readability.</p>
+    <p>Fixed-size century-coloured prototype thumbnails; earlier centuries use darker reds.</p>
   </header>
   <main>
     <div class="figure">{svg}</div>
@@ -254,9 +256,9 @@ def main():
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--perplexity", type=float, default=30.0)
     parser.add_argument("--random-state", type=int, default=42)
-    parser.add_argument("--width", type=int, default=1800)
-    parser.add_argument("--height", type=int, default=1500)
-    parser.add_argument("--thumbnail-size", type=int, default=38)
+    parser.add_argument("--width", type=int, default=1900)
+    parser.add_argument("--height", type=int, default=1600)
+    parser.add_argument("--thumbnail-size", type=int, default=44)
     args = parser.parse_args()
 
     device = torch.device(args.device or ("cuda" if torch.cuda.is_available() else "cpu"))
