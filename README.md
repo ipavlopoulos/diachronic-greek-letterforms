@@ -46,6 +46,7 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `source.py` | Shared model definitions, losses, augmentation, datasets, training, evaluation, and representation helpers. |
 | `best_cnn_letter_model.pth` | Released `CNN2D` checkpoint for classification and representation extraction. |
 | `extract_representations.py` | Command-line CSV exporter for 512-dimensional letterform representations. |
+| `create_qualitative_examples.py` | Recreates the compact visual panel showing augmentation, confusability, cross-dataset Gamma examples, and visual variability. |
 | `representation_demo.ipynb` | Small guided notebook for loading the checkpoint, previewing a cliplet, extracting representations, inspecting nearest neighbors, and trying a user-uploaded image. |
 | `Inference.ipynb` | Minimal classification example with the saved model. |
 | `cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
@@ -53,6 +54,7 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `data/hellchar` | Hell-Char metadata and cliplets for training and in-distribution evaluation. |
 | `data/palitchar` | PaLit-Char metadata and cliplets for near-period out-of-distribution evaluation. |
 | `data/medchar` | Med-Char metadata and cliplets for later-period diachronic evaluation. |
+| `visual_artifacts/qualitative_visual_examples.png` | Generated qualitative panel used to illustrate visual challenges and examples. |
 
 ## Representation Extraction
 
@@ -151,6 +153,16 @@ loss = cross_entropy + lambda_scl * similarity_weighted_supcon
 The contrastive term pulls examples of the same letter together while weighting negatives according to a class-similarity matrix. That matrix can be computed dynamically from class prototypes in the current embedding space, optionally blended with expert-defined priors.
 
 The augmentation pipeline includes ordinary image perturbations and a lacunae-inspired transform, `RandomLacunae`, that masks irregular missing regions to mimic damaged manuscript surfaces.
+
+## Visual Artifacts
+
+The qualitative visual panel can be regenerated from the released cliplets:
+
+```bash
+python create_qualitative_examples.py
+```
+
+It writes `visual_artifacts/qualitative_visual_examples.png`, showing side-by-side augmentation examples, confusable forms, Gamma across datasets, and representative background/degradation variability.
 
 ## Data
 
