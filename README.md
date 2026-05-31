@@ -60,6 +60,7 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `visual_artifacts/qualitative_visual_examples.png` | Generated qualitative panel used to illustrate visual challenges and examples. |
 | `visual_artifacts/letter_century_plot_resnet_reproduced.svg` | Recreated letter-century plot with fixed-size colour prototype thumbnails and red century markers. |
 | `visual_artifacts/letter_century_plot_resnet_reproduced.html` | Browser-viewable version of the recreated letter-century plot. |
+| `visual_artifacts/letter_century_plot_resnet_reproduced_300dpi.pdf` | 300 DPI PDF export of the recreated letter-century plot. |
 
 ## Representation Extraction
 
@@ -183,9 +184,11 @@ python scripts/reproduce_letter_century_plot.py --device cpu
 ```
 
 It writes `visual_artifacts/letter_century_plot_resnet_reproduced.svg` and
-`visual_artifacts/letter_century_plot_resnet_reproduced.html`. All prototype
-thumbnails use the same image scale, labels are offset with leader lines, and
-markers use a red colour scale where older examples are darker.
+`visual_artifacts/letter_century_plot_resnet_reproduced.html`; a 300 DPI PDF
+export is also available as
+`visual_artifacts/letter_century_plot_resnet_reproduced_300dpi.pdf`. All
+prototype thumbnails use the same image scale, labels are offset with leader
+lines, and markers use a red colour scale where older examples are darker.
 
 ## Data
 
