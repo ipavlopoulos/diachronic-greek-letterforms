@@ -23,10 +23,10 @@ pip install torch torchvision numpy opencv-python pillow scikit-learn matplotlib
 
 Then open the representation demo:
 
-[![Open `representation_demo.ipynb` in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ipavlopoulos/diachronic-greek-letterforms/blob/main/representation_demo.ipynb)
+[![Open `representation_demo.ipynb` in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ipavlopoulos/diachronic-greek-letterforms/blob/main/notebooks/representation_demo.ipynb)
 
 ```bash
-jupyter notebook representation_demo.ipynb
+jupyter notebook notebooks/representation_demo.ipynb
 ```
 
 GitHub's notebook preview is static and may occasionally show a rendering error for notebooks; use Colab or local Jupyter to run cells and recompute outputs. If the repository is private, Colab needs to be connected to a GitHub account with access, or the repository needs to be public.
@@ -47,11 +47,12 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `best_cnn_letter_model.pth` | Released `CNN2D` checkpoint for classification and representation extraction. |
 | `extract_representations.py` | Command-line CSV exporter for 512-dimensional letterform representations. |
 | `create_qualitative_examples.py` | Recreates the compact visual panel showing augmentation, confusability, cross-dataset Gamma examples, and visual variability. |
-| `representation_demo.ipynb` | Small guided notebook for loading the checkpoint, previewing a cliplet, extracting representations, inspecting nearest neighbors, and trying a user-uploaded image. |
-| `Inference.ipynb` | Minimal classification example with the saved model. |
-| `cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
-| `resnet_training.ipynb` | ResNet-18 training workflow that regenerates `best_resnet_supcon_model.pth` from the released Hell-Char data. |
-| `cnn_embeddings_clustering.ipynb` | Larger exploratory notebook for embedding extraction and clustering experiments. |
+| `notebooks/representation_demo.ipynb` | Small guided notebook for loading the checkpoint, previewing a cliplet, extracting representations, inspecting nearest neighbors, and trying a user-uploaded image. |
+| `notebooks/Inference.ipynb` | Minimal classification example with the saved model. |
+| `notebooks/cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
+| `notebooks/resnet_training.ipynb` | ResNet-18 training workflow that regenerates `best_resnet_supcon_model.pth` from the released Hell-Char data. |
+| `notebooks/cnn_embeddings_clustering.ipynb` | Larger exploratory notebook for embedding extraction and clustering experiments. |
+| `notebooks/data_overview.ipynb` | Quick data inventory notebook for released metadata and cliplet folders. |
 | `data/hellchar` | Hell-Char metadata and cliplets for training and in-distribution evaluation. |
 | `data/palitchar` | PaLit-Char metadata and cliplets for near-period out-of-distribution evaluation. |
 | `data/medchar` | Med-Char metadata and cliplets for later-period diachronic evaluation. |
@@ -97,14 +98,14 @@ The CSV contains:
 - `embedding_norm`
 - `embedding_000` through `embedding_511`
 
-For an interactive walkthrough, open `representation_demo.ipynb`.
+For an interactive walkthrough, open `notebooks/representation_demo.ipynb`.
 
 ## Classification Inference
 
 Run from the project directory:
 
 ```bash
-jupyter notebook Inference.ipynb
+jupyter notebook notebooks/Inference.ipynb
 ```
 
 The notebook loads `best_cnn_letter_model.pth`, samples an image from `data/palitchar/cliplets`, preprocesses it to `64x64` grayscale, and predicts one of the 24 Greek letter classes.
@@ -130,7 +131,7 @@ print(LETTER_LABELS[predicted_index])
 
 ## Training Workflow
 
-The main path for the released lightweight CNN is `cnn_training.ipynb`:
+The main path for the released lightweight CNN is `notebooks/cnn_training.ipynb`:
 
 1. Load Hell-Char cliplets and metadata from `data/hellchar`.
 2. Preprocess images to normalized `64x64` grayscale arrays.
@@ -141,7 +142,7 @@ The main path for the released lightweight CNN is `cnn_training.ipynb`:
 
 The core training function is `train_cnn2d` in `source.py`.
 
-For ResNet-18 reproduction, use `resnet_training.ipynb`. It reuses the same
+For ResNet-18 reproduction, use `notebooks/resnet_training.ipynb`. It reuses the same
 Hell-Char split, lacuna-style augmentation, similarity-weighted supervised
 contrastive objective, and evaluation function, then saves
 `best_resnet_supcon_model.pth`. The ResNet checkpoint is not included in the
