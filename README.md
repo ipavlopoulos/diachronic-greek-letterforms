@@ -50,6 +50,7 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `representation_demo.ipynb` | Small guided notebook for loading the checkpoint, previewing a cliplet, extracting representations, inspecting nearest neighbors, and trying a user-uploaded image. |
 | `Inference.ipynb` | Minimal classification example with the saved model. |
 | `cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
+| `resnet_training.ipynb` | ResNet-18 training workflow that regenerates `best_resnet_supcon_model.pth` from the released Hell-Char data. |
 | `cnn_embeddings_clustering.ipynb` | Larger exploratory notebook for embedding extraction and clustering experiments. |
 | `data/hellchar` | Hell-Char metadata and cliplets for training and in-distribution evaluation. |
 | `data/palitchar` | PaLit-Char metadata and cliplets for near-period out-of-distribution evaluation. |
@@ -129,7 +130,7 @@ print(LETTER_LABELS[predicted_index])
 
 ## Training Workflow
 
-The main path is `cnn_training.ipynb`:
+The main path for the released lightweight CNN is `cnn_training.ipynb`:
 
 1. Load Hell-Char cliplets and metadata from `data/hellchar`.
 2. Preprocess images to normalized `64x64` grayscale arrays.
@@ -139,6 +140,12 @@ The main path is `cnn_training.ipynb`:
 6. Evaluate with classification reports and confusion matrices.
 
 The core training function is `train_cnn2d` in `source.py`.
+
+For ResNet-18 reproduction, use `resnet_training.ipynb`. It reuses the same
+Hell-Char split, lacuna-style augmentation, similarity-weighted supervised
+contrastive objective, and evaluation function, then saves
+`best_resnet_supcon_model.pth`. The ResNet checkpoint is not included in the
+repository, so this notebook is the reproducible path for regenerating it.
 
 ## Method Summary
 
