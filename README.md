@@ -47,6 +47,7 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `best_cnn_letter_model.pth` | Released `CNN2D` checkpoint for classification and representation extraction. |
 | `scripts/extract_representations.py` | Command-line CSV exporter for 512-dimensional letterform representations. |
 | `scripts/create_qualitative_examples.py` | Recreates the compact visual panel showing augmentation, confusability, cross-dataset Gamma examples, and visual variability. |
+| `scripts/reproduce_letter_century_plot.py` | Recreates the Med-Char letter-century t-SNE plot as fixed-scale SVG and HTML visualizations. |
 | `notebooks/representation_demo.ipynb` | Small guided notebook for loading the checkpoint, previewing a cliplet, extracting representations, inspecting nearest neighbors, and trying a user-uploaded image. |
 | `notebooks/Inference.ipynb` | Minimal classification example with the saved model. |
 | `notebooks/cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
@@ -57,6 +58,8 @@ For GPU training, install the PyTorch build appropriate for your CUDA version fr
 | `data/palitchar` | PaLit-Char metadata and cliplets for near-period out-of-distribution evaluation. |
 | `data/medchar` | Med-Char metadata and cliplets for later-period diachronic evaluation. |
 | `visual_artifacts/qualitative_visual_examples.png` | Generated qualitative panel used to illustrate visual challenges and examples. |
+| `visual_artifacts/letter_century_plot_resnet_reproduced.svg` | Recreated letter-century plot with fixed-size prototype thumbnails. |
+| `visual_artifacts/letter_century_plot_resnet_reproduced.html` | Browser-viewable version of the recreated letter-century plot. |
 
 ## Representation Extraction
 
@@ -171,6 +174,18 @@ python scripts/create_qualitative_examples.py
 ```
 
 It writes `visual_artifacts/qualitative_visual_examples.png`, showing side-by-side augmentation examples, confusable forms, Gamma across datasets, and representative background/degradation variability.
+
+The Med-Char letter-century embedding plot can be regenerated after restoring or
+training the ResNet18+LF+DSCL checkpoint:
+
+```bash
+python scripts/reproduce_letter_century_plot.py --device cpu
+```
+
+It writes `visual_artifacts/letter_century_plot_resnet_reproduced.svg` and
+`visual_artifacts/letter_century_plot_resnet_reproduced.html`. All prototype
+thumbnails use the same image scale, and labels are offset with leader lines so
+that the annotations remain visible.
 
 ## Data
 
