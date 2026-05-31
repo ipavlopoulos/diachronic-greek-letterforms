@@ -29,7 +29,7 @@ Then open the representation demo:
 jupyter notebook representation_demo.ipynb
 ```
 
-GitHub's notebook preview is static; use Colab or local Jupyter to run the upload cell and recompute outputs.
+GitHub's notebook preview is static and may occasionally show a rendering error for notebooks; use Colab or local Jupyter to run cells and recompute outputs. If the repository is private, Colab needs to be connected to a GitHub account with access, or the repository needs to be public.
 
 Or export embeddings for a directory of cliplets:
 
