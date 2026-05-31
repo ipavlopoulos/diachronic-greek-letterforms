@@ -1,41 +1,98 @@
-# Optical Greek Letters
+# Diachronic Greek Letterforms
 
 Representation learning for ancient Greek letterforms across time.
 
-This repository contains data, notebooks, reusable PyTorch code, and a saved lightweight CNN checkpoint for classifying Greek letter cliplets and studying the learned letterform embeddings.
+This repository accompanies the paper on robust representation learning for historical Greek handwriting. It contains Greek letter cliplet datasets, reusable PyTorch code, trained model weights, and notebooks for classification, representation extraction, and exploratory analysis of learned letterform embeddings.
 
-If you are working from the parent workspace, the actual project is nested here:
+The main model is a lightweight CNN trained to classify 24 Greek letter classes while also producing a 512-dimensional representation for each letter image. These representations can be used for nearest-neighbor search, clustering, prototype analysis, and other paleographic workflows.
+
+## Quick Start
+
+Clone the repository and enter the project directory:
 
 ```bash
+git clone https://github.com/ipavlopoulos/diachronic-greek-letterforms.git
 cd diachronic-greek-letterforms
 ```
 
-Most notebooks and paths assume this directory is the current working directory.
-
-## What Is Included
-
-- `source.py`: shared model, loss, augmentation, dataset, training, and evaluation code.
-- `extract_representations.py`: CSV exporter for the released 512-dimensional letterform representations.
-- `representation_demo.ipynb`: small notebook for loading the released checkpoint, extracting representations, and inspecting nearest neighbors.
-- `cnn_training.ipynb`: main training workflow for the lightweight CNN with similarity-weighted supervised contrastive learning.
-- `cnn_embeddings_clustering.ipynb`: embedding extraction and clustering experiments.
-- `Inference.ipynb`: minimal saved-model inference example.
-- `best_cnn_letter_model.pth`: saved `CNN2D` weights for quick inference and representation extraction.
-- `data/hellchar`: Hell-Char metadata and cliplets, used for training and in-distribution evaluation.
-- `data/palitchar`: PaLit-Char metadata and cliplets, used as a near-time out-of-distribution evaluation set.
-- `data/medchar`: Med-Char metadata and cliplets, used as a later-time out-of-distribution evaluation set.
-
-## Setup
-
-The code was developed in a Python/Jupyter environment with PyTorch and common scientific Python packages. There is no pinned environment file in this anonymized release, but the notebooks and `source.py` use:
+Install the Python packages used by the notebooks and scripts:
 
 ```bash
-pip install torch torchvision numpy opencv-python pillow scikit-learn matplotlib seaborn pandas jupyter
+pip install torch torchvision numpy opencv-python pillow scikit-learn matplotlib seaborn pandas jupyter ipywidgets
 ```
 
-For GPU training, install the PyTorch build appropriate for your CUDA version from the official PyTorch instructions.
+Then open the representation demo:
 
-## Quick Inference
+```bash
+jupyter notebook representation_demo.ipynb
+```
+
+Or export embeddings for a directory of cliplets:
+
+```bash
+python extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
+```
+
+For GPU training, install the PyTorch build appropriate for your CUDA version from the official PyTorch instructions. The released checkpoint and demo run on CPU.
+
+## Repository Contents
+
+| Path | Purpose |
+| --- | --- |
+| `source.py` | Shared model definitions, losses, augmentation, datasets, training, evaluation, and representation helpers. |
+| `best_cnn_letter_model.pth` | Released `CNN2D` checkpoint for classification and representation extraction. |
+| `extract_representations.py` | Command-line CSV exporter for 512-dimensional letterform representations. |
+| `representation_demo.ipynb` | Small guided notebook for loading the checkpoint, previewing a cliplet, extracting representations, inspecting nearest neighbors, and trying a user-uploaded image. |
+| `Inference.ipynb` | Minimal classification example with the saved model. |
+| `cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
+| `cnn_embeddings_clustering.ipynb` | Larger exploratory notebook for embedding extraction and clustering experiments. |
+| `data/hellchar` | Hell-Char metadata and cliplets for training and in-distribution evaluation. |
+| `data/palitchar` | PaLit-Char metadata and cliplets for near-period out-of-distribution evaluation. |
+| `data/medchar` | Med-Char metadata and cliplets for later-period diachronic evaluation. |
+
+## Representation Extraction
+
+The released checkpoint can be used as a transparent letterform encoder. Each input image produces one L2-normalized 512-dimensional vector from the penultimate CNN layer.
+
+Shape guide:
+
+- one image -> embedding array with shape `(1, 512)`
+- 40 images -> embedding array with shape `(40, 512)`
+- exported CSV for 40 images -> shape `(40, 516)` because it includes 4 metadata columns plus 512 embedding columns
+
+Python example:
+
+```python
+from source import extract_letterform_representations, load_letterform_model
+
+model = load_letterform_model("best_cnn_letter_model.pth", device="cpu")
+embeddings, logits = extract_letterform_representations(
+    model,
+    ["data/palitchar/cliplets/Alpha_10352_001.jpg"],
+    device="cpu",
+    return_logits=True,
+)
+
+print(embeddings.shape)  # (1, 512)
+```
+
+CSV export example:
+
+```bash
+python extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
+```
+
+The CSV contains:
+
+- `filename`
+- `predicted_label`
+- `confidence`
+- `embedding_norm`
+- `embedding_000` through `embedding_511`
+
+For an interactive walkthrough, open `representation_demo.ipynb`.
+
+## Classification Inference
 
 Run from the project directory:
 
@@ -43,46 +100,26 @@ Run from the project directory:
 jupyter notebook Inference.ipynb
 ```
 
-The notebook loads `best_cnn_letter_model.pth`, samples an image from `data/palitchar/cliplets`, preprocesses it to `64x64` grayscale, and predicts one of the 24 Greek letter classes:
+The notebook loads `best_cnn_letter_model.pth`, samples an image from `data/palitchar/cliplets`, preprocesses it to `64x64` grayscale, and predicts one of the 24 Greek letter classes.
+
+A minimal code sketch:
 
 ```python
-from source import CNN2D, preprocess_image_2d
 import torch
+from source import LETTER_LABELS, extract_letterform_representations, load_letterform_model
 
-labels = [
-    "Alpha", "Beta", "Chi", "Delta", "Epsilon", "Eta", "Gamma", "Iota",
-    "Kappa", "Lambda", "Mu", "Nu", "Omega", "Omicron", "Phi", "Pi",
-    "Psi", "Rho", "Sigma", "Tau", "Theta", "Upsilon", "Xi", "Zeta",
-]
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = CNN2D(num_classes=24, image_size=(64, 64)).to(device)
-model.load_state_dict(torch.load("best_cnn_letter_model.pth", map_location=device))
-model.eval()
-```
-
-## Representation Extraction
-
-The released checkpoint can also be used as a transparent letterform encoder. The helper below returns L2-normalized 512-dimensional representations from the penultimate CNN layer:
-
-```python
-from source import extract_letterform_representations, load_letterform_model
-
-model = load_letterform_model("best_cnn_letter_model.pth")
+model = load_letterform_model("best_cnn_letter_model.pth", device="cpu")
 embeddings, logits = extract_letterform_representations(
     model,
     ["data/palitchar/cliplets/Alpha_10352_001.jpg"],
+    device="cpu",
     return_logits=True,
 )
+
+probabilities = torch.softmax(torch.tensor(logits), dim=1)
+predicted_index = int(probabilities.argmax(dim=1)[0])
+print(LETTER_LABELS[predicted_index])
 ```
-
-To export representations for a directory of cliplets:
-
-```bash
-python extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
-```
-
-For an interactive walkthrough, open `representation_demo.ipynb`.
 
 ## Training Workflow
 
@@ -99,7 +136,7 @@ The core training function is `train_cnn2d` in `source.py`.
 
 ## Method Summary
 
-The model learns both class predictions and a 512-dimensional embedding for each letter image.
+The model learns both class predictions and a 512-dimensional embedding for each letter image. It combines supervised classification with a representation-learning objective designed for visually confusable historical letterforms.
 
 The classifier is trained with:
 
@@ -111,7 +148,13 @@ The contrastive term pulls examples of the same letter together while weighting 
 
 The augmentation pipeline includes ordinary image perturbations and a lacunae-inspired transform, `RandomLacunae`, that masks irregular missing regions to mimic damaged manuscript surfaces.
 
-## Data Notes
+## Data
+
+The release contains three letter-level datasets:
+
+- Hell-Char: training and in-distribution evaluation data derived from Hellenistic papyri.
+- PaLit-Char: near-period evaluation data from later papyri/literary witnesses.
+- Med-Char: later diachronic evaluation data from Byzantine minuscule manuscripts.
 
 The datasets have different metadata schemas:
 
@@ -121,6 +164,25 @@ The datasets have different metadata schemas:
 
 The cliplet filenames encode the letter label and manuscript/document identifier. The notebooks derive labels and metadata from those filenames and CSV files.
 
+## Expected Input Images
+
+The model expects a cropped image containing a single Greek letterform, similar to the images in the `cliplets` directories. Grayscale and RGB files are both accepted; images are converted to grayscale and resized to `64x64`.
+
+For best results, use images with:
+
+- one isolated character,
+- minimal surrounding text,
+- enough margin that strokes are not cut off,
+- manuscript-like foreground/background contrast.
+
+Full manuscript pages should be segmented into individual letter crops before using this model.
+
 ## Project State
 
-This is a research release, not a packaged Python library. The notebooks are the primary workflows, and `source.py` collects the reusable components exported from those notebooks. Paths are relative to this nested project directory.
+This is a research release, not a packaged Python library. The notebooks are the primary workflows, and `source.py` collects reusable components exported from those notebooks.
+
+Generated files such as `representation_demo_output.csv` are intentionally not required for running the project; they can be recreated from the demo notebook or `extract_representations.py`.
+
+## Citation
+
+If you use this code, data, or the released letterform representations, please cite the accompanying paper. Citation details can be added here once the final bibliographic record is available.
