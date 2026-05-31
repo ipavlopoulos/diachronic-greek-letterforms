@@ -150,6 +150,9 @@ def main():
     parser.add_argument("--learning-rate", type=float, default=0.001)
     parser.add_argument("--lambda-scl", type=float, default=0.1)
     parser.add_argument("--patience", type=int, default=10)
+    parser.add_argument("--use-scheduler", action="store_true")
+    parser.add_argument("--scheduler-patience", type=int, default=3)
+    parser.add_argument("--scheduler-factor", type=float, default=0.1)
     parser.add_argument("--num-workers", type=int, default=2)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--test-size", type=float, default=0.2)
@@ -191,6 +194,9 @@ def main():
         patience=args.patience,
         save_path=str(checkpoint_path),
         learning_rate=args.learning_rate,
+        use_scheduler=args.use_scheduler,
+        scheduler_patience=args.scheduler_patience,
+        scheduler_factor=args.scheduler_factor,
     )
 
     model = ResNetClassifier(num_classes=num_classes, pretrained=False).to(device)

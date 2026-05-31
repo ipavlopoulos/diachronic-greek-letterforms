@@ -227,11 +227,22 @@ def train_cnn2d(model, train_loader, val_loader, device,
                 save_path='best_cnn_letter_model.pth',
                 learning_rate=0.001,
                 similarity_matrix_fn=None,
-                ema_alpha=0.0):
+                ema_alpha=0.0,
+                use_scheduler=False,
+                scheduler_patience=3,
+                scheduler_factor=0.1):
     """
     Train CNN2D with optional SW-SCL and TTA embeddings.
     """
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    scheduler = None
+    if use_scheduler:
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer,
+            mode='min',
+            patience=scheduler_patience,
+            factor=scheduler_factor,
+        )
     ce_loss_fn = nn.CrossEntropyLoss()
     best_val_loss = float('inf')
     epochs_no_improve = 0
@@ -301,6 +312,8 @@ def train_cnn2d(model, train_loader, val_loader, device,
         val_accuracy = correct / total
         val_losses.append(epoch_val_loss)
         val_accuracies.append(val_accuracy)
+        if scheduler is not None:
+            scheduler.step(epoch_val_loss)
 
         print(f'Epoch [{epoch+1}/{num_epochs}] '
               f'Train Loss: {epoch_loss:.4f}, '
