@@ -189,4 +189,19 @@ Generated files such as `representation_demo_output.csv` are intentionally not r
 
 ## Citation
 
-If you use this code, data, or the released letterform representations, please cite the accompanying paper. Citation details can be added here once the final bibliographic record is available.
+If you use this code, data, or the released letterform representations, please cite the accompanying paper, to be presented at ICDAR in Vienna:
+
+Pavlopoulos, J., Barbakos, S., Ferretti, L., Voulgarakis, D., Paparrigopoulou, A., Konstantinidou, M., De Gregorio, G., Marthot-Santaniello, I., Platanou, P., and Essler, H. Learning Diachronic Representations of Ancient Greek Letterforms. To appear/presented at ICDAR, Vienna.
+
+```bibtex
+@inproceedings{pavlopoulos_diachronic_greek_letterforms,
+  title     = {Learning Diachronic Representations of Ancient Greek Letterforms},
+  author    = {Pavlopoulos, John and Barbakos, Spyros and Ferretti, Lavinia and Voulgarakis, Dionysis and Paparrigopoulou, Asimina and Konstantinidou, Maria and De Gregorio, Giuseppe and Marthot-Santaniello, Isabelle and Platanou, Paraskevi and Essler, Holger},
+  booktitle = {Proceedings of the International Conference on Document Analysis and Recognition (ICDAR)},
+  address   = {Vienna, Austria},
+  note      = {To appear},
+  url       = {https://github.com/ipavlopoulos/diachronic-greek-letterforms}
+}
+```
+
+Please replace the `note` field with the final year, pages, publisher, and DOI once the proceedings record is available.
