@@ -14,7 +14,7 @@ from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader, TensorDataset
 
 from source import ResNetClassifier, build_S_from_prototypes
-from scripts._hellchar import load_hellchar, preprocess_gray, split_indices, set_seed
+from scripts._hellchar import load_hellchar, preprocess_gray, split_indices, set_seed, to_model_input
 
 
 def main():
@@ -39,7 +39,7 @@ def main():
     model.load_state_dict(torch.load(args.checkpoint, map_location=dev)); model.eval()
 
     # ----- confusion matrix on test split -----
-    Xte = torch.tensor(gray[te], dtype=torch.float32)
+    Xte = to_model_input(gray[te])
     preds = []
     with torch.no_grad():
         for s in range(0, len(Xte), 64):
@@ -63,7 +63,7 @@ def main():
         print(f"  {ti} -> {pj}: {r:.2f} (n={c})")
 
     # ----- dynamic similarity matrix (DSCL S) over training set -----
-    Xtr = torch.tensor(gray[tr], dtype=torch.float32); Ytr = torch.tensor(ytr)
+    Xtr = to_model_input(gray[tr]); Ytr = torch.tensor(ytr)
     loader = DataLoader(TensorDataset(Xtr, Ytr), batch_size=64, shuffle=False)
     S = build_S_from_prototypes(model, loader, dev, len(classes)).cpu().numpy()
     plt.figure(figsize=(10, 8))
