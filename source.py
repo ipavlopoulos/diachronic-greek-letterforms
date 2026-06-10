@@ -225,8 +225,9 @@ def train_cnn2d(model, train_loader, val_loader, device,
                 n_views=2, tta_transform=None, use_swscl=True,
                 use_tta=True, update_S_every=3, patience=10,
                 save_path='best_cnn_letter_model.pth',
-                learning_rate=0.001,
+                learning_rate=1e-4,
                 similarity_matrix_fn=None,
+                contrastive_loss="dscl",
                 ema_alpha=0.0,
                 use_scheduler=False,
                 scheduler_patience=3,
@@ -253,13 +254,14 @@ def train_cnn2d(model, train_loader, val_loader, device,
 
     S_matrix = None
     swscl_loss_fn = None
+    scl_loss_fn = SupConLoss(temperature=0.07)
 
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
 
         # --- Update similarity matrix dynamically ---
-        if use_swscl and (epoch % update_S_every == 0 or S_matrix is None):
+        if use_swscl and contrastive_loss == "dscl" and (epoch % update_S_every == 0 or S_matrix is None):
             new_S = similarity_matrix_fn(model, train_loader, device, num_classes)
             if S_matrix is None or ema_alpha == 0.0:
                 S_matrix = new_S
@@ -280,7 +282,12 @@ def train_cnn2d(model, train_loader, val_loader, device,
                     emb, y_aug = get_tta_embeddings(model, x_orig, y, n_views, tta_transform, device)
                 else:
                     emb, y_aug = model.get_embeddings(x_orig), y
-                swscl_loss = swscl_loss_fn(emb, y_aug)
+                if contrastive_loss == "scl":
+                    swscl_loss = scl_loss_fn(emb, y_aug)
+                elif contrastive_loss == "dscl":
+                    swscl_loss = swscl_loss_fn(emb, y_aug)
+                else:
+                    raise ValueError(f"Unknown contrastive_loss: {contrastive_loss}")
             else:
                 swscl_loss = 0.0
 
@@ -407,10 +414,14 @@ class RandomLacunae(object):
         h, w = img_np.shape[:2]
 
         for _ in range(random.randint(*self.num_lacunae)):
-            # Random size relative to image
+            # Random size relative to image. Semi-axes are set so the ellipse
+            # area equals the sampled fraction of the image: for an ellipse,
+            # area = pi*(w/2)*(h/2), hence w*h = 4*area/pi. The aspect ratio r
+            # makes the lacuna anisotropic without changing its area.
             lacuna_area = random.uniform(*self.size_range) * h * w
-            lacuna_w = int(np.sqrt(lacuna_area) * random.uniform(0.5, 1.5))
-            lacuna_h = int(np.sqrt(lacuna_area) * random.uniform(0.5, 1.5))
+            r = random.uniform(0.5, 1.5)
+            lacuna_w = int(np.sqrt(4.0 * lacuna_area / np.pi * r))
+            lacuna_h = int(np.sqrt(4.0 * lacuna_area / np.pi / r))
 
             # Random center
             x = random.randint(0, w - 1)
@@ -434,6 +445,58 @@ class RandomLacunae(object):
 
             # Apply lacuna (set pixels to background = white/255)
             img_np[mask == 1] = 255 * self.v  # assuming grayscale / white parchment
+
+        return torch.tensor(img_np) if isinstance(img, torch.Tensor) else img_np
+
+
+class RandomRectangles(object):
+    """Rectangular counterpart of RandomLacunae, for a shape-only ablation.
+
+    Identical to RandomLacunae in every respect -- same probability p, same
+    number of regions (1-4), same per-region area sampled from size_range, same
+    random centre, the same erode/dilate morphology, and the same fill value --
+    except that each region is a (rotated) filled rectangle instead of an
+    ellipse. The rectangle is sized so that its filled area equals the sampled
+    area (w*h = area), matching the ellipse's area exactly, so that total
+    occlusion is held equal and the only difference from RandomLacunae is the
+    base shape (rectangular vs elliptic).
+    """
+    def __init__(self, num_lacunae=(1, 4), size_range=(0.02, 0.15), p=0.5, v=0.5):
+        self.num_lacunae = num_lacunae
+        self.size_range = size_range
+        self.p = p
+        self.v = v
+
+    def __call__(self, img):
+        if random.random() > self.p:
+            return img
+
+        img_np = np.array(img).copy()
+        h, w = img_np.shape[:2]
+
+        for _ in range(random.randint(*self.num_lacunae)):
+            # Filled rectangle area = w*h = sampled area (matches ellipse area).
+            rect_area = random.uniform(*self.size_range) * h * w
+            r = random.uniform(0.5, 1.5)
+            rect_w = max(int(np.sqrt(rect_area * r)), 1)
+            rect_h = max(int(np.sqrt(rect_area / r)), 1)
+
+            x = random.randint(0, w - 1)
+            y = random.randint(0, h - 1)
+
+            mask = np.zeros((h, w), dtype=np.uint8)
+            box = cv2.boxPoints(((x, y), (rect_w, rect_h), random.randint(0, 180)))
+            cv2.fillConvexPoly(mask, box.astype(np.int32), 1)
+
+            if random.random() < 0.7:
+                kernel_size = random.choice([3, 5, 7])
+                kernel = np.ones((kernel_size, kernel_size), np.uint8)
+                if random.random() < 0.5:
+                    mask = cv2.erode(mask, kernel, iterations=1)
+                else:
+                    mask = cv2.dilate(mask, kernel, iterations=1)
+
+            img_np[mask == 1] = 255 * self.v
 
         return torch.tensor(img_np) if isinstance(img, torch.Tensor) else img_np
 
@@ -462,7 +525,7 @@ data_transform = transforms.Compose([
     transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)), # Translate horizontally and vertically
     transforms.RandomResizedCrop(size=(64, 64), scale=(0.8, 1.0)), # Random crop and resize
     transforms.ColorJitter(brightness=0.2, contrast=0.2), # Adjust brightness and contrast
-    RandomLacunae(num_lacunae=(0,2), size_range=(0.02,0.12), p=0.5, v=1),
+    RandomLacunae(num_lacunae=(1,4), size_range=(0.02,0.15), p=0.5, v=1),
     transforms.ToTensor(),             # Convert to PyTorch Tensor (adds channel dimension)
     #transforms.RandomErasing(p=0.5, value=0), # erase parts (lacunae)
     transforms.Normalize((0.5,), (0.5,)), # Normalize (assuming grayscale images)

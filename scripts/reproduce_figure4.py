@@ -20,6 +20,7 @@ from PIL import Image
 from sklearn.metrics import classification_report
 
 from source import ResNetClassifier, image_path_to_tensor
+from scripts.train_timm_backbone import TimmClassifier
 
 
 def predict_medchar(model, medchar, cliplet_dir, classes, device, batch_size):
@@ -43,12 +44,12 @@ def predict_medchar(model, medchar, cliplet_dir, classes, device, batch_size):
     return medchar
 
 
-def plot_error_year_boxplot(results, output_path):
+def plot_error_year_boxplot(results, output_path, fig_height=7.9):
     errors = results[results["is_error"]].copy()
     order = sorted(results["letter"].unique())
     counts = errors.groupby("letter").size().reindex(order, fill_value=0)
 
-    plt.figure(figsize=(14.8, 7.9))
+    plt.figure(figsize=(14.8, fig_height))
     ax = sns.boxplot(
         data=errors,
         x="letter",
@@ -103,12 +104,12 @@ def main():
     parser.add_argument(
         "--checkpoint",
         type=Path,
-        default=ROOT / "runs" / "resnet_lf_dscl_lr1e-4_bs16" / "best_resnet_lf_dscl_model.pth",
+        default=ROOT / "models" / "resnet_lf_dscl" / "best_resnet_lf_dscl_model.pth",
     )
     parser.add_argument(
         "--summary",
         type=Path,
-        default=ROOT / "runs" / "resnet_lf_dscl_lr1e-4_bs16" / "resnet_lf_dscl_summary.json",
+        default=ROOT / "models" / "resnet_lf_dscl" / "resnet_lf_dscl_summary.json",
     )
     parser.add_argument("--medchar-csv", type=Path, default=ROOT / "data" / "medchar" / "medchar.csv")
     parser.add_argument("--cliplet-dir", type=Path, default=ROOT / "data" / "medchar" / "cliplets")
@@ -120,9 +121,11 @@ def main():
     parser.add_argument(
         "--results-csv",
         type=Path,
-        default=ROOT / "runs" / "resnet_lf_dscl_lr1e-4_bs16" / "medchar_predictions_for_figure4.csv",
+        default=ROOT / "runs" / "resnet_lf_dscl" / "medchar_predictions_for_figure4.csv",
     )
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--timm-model", default=None, help="If set, load a TimmClassifier (e.g. convnextv2_tiny) instead of ResNet.")
+    parser.add_argument("--fig-height", type=float, default=7.9, help="Figure height in inches (lower = shorter/more compact).")
     parser.add_argument("--device", default=None)
     parser.add_argument(
         "--use-existing-inferred-labels",
@@ -141,13 +144,16 @@ def main():
         device = torch.device(args.device or ("cuda" if torch.cuda.is_available() else "cpu"))
         with open(args.summary) as handle:
             classes = json.load(handle)["classes"]
-        model = ResNetClassifier(num_classes=len(classes), pretrained=False).to(device)
+        if args.timm_model:
+            model = TimmClassifier(args.timm_model, len(classes), pretrained=False, in_chans=1, image_size=64).to(device)
+        else:
+            model = ResNetClassifier(num_classes=len(classes), pretrained=False).to(device)
         model.load_state_dict(torch.load(args.checkpoint, map_location=device))
         results = predict_medchar(model, medchar, args.cliplet_dir, classes, device, args.batch_size)
 
     args.results_csv.parent.mkdir(parents=True, exist_ok=True)
     results.to_csv(args.results_csv, index=False)
-    plot_error_year_boxplot(results, args.output)
+    plot_error_year_boxplot(results, args.output, fig_height=args.fig_height)
 
     report = classification_report(results["letter"], results["prediction"], zero_division=0, output_dict=True)
     print(f"Wrote {args.output}")

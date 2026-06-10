@@ -1,0 +1,18 @@
+# Core
+torch>=2.0
+torchvision>=0.15
+timm>=0.9            # ViT-16S / ConvNeXt-V2 backbones
+numpy>=1.23
+scipy>=1.10
+scikit-learn>=1.2
+opencv-python>=4.7
+pillow>=9.0
+pandas>=1.5
+
+# Figures
+matplotlib>=3.6
+seaborn>=0.12
+
+# Notebooks (optional)
+# jupyter
+# ipywidgets

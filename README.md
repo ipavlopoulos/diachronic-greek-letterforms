@@ -1,250 +1,172 @@
-# Diachronic Greek Letterforms
+# Learning Diachronic Representations of Ancient Greek Letterforms
 
-Representation learning for ancient Greek letterforms across time.
+This repository accompanies the paper *"Learning Diachronic Representations of
+Ancient Greek Letterforms."* It contains the three Greek letter datasets
+introduced in the paper, the PyTorch implementation of our two methodological
+contributions, and the scripts that reproduce every table and figure.
 
-This repository accompanies the paper on robust representation learning for historical Greek handwriting. It contains Greek letter cliplet datasets, reusable PyTorch code, trained model weights, and notebooks for classification, representation extraction, and exploratory analysis of learned letterform embeddings.
+We study how modern representation learning captures the variation of Greek
+handwriting across more than two millennia. Two domain-driven ideas drive the
+work:
 
-The main model is a lightweight CNN trained to classify 24 Greek letter classes while also producing a 512-dimensional representation for each letter image. These representations can be used for nearest-neighbor search, clustering, prototype analysis, and other paleographic workflows.
+- **LF — Lacuna-driven Fragmentation augmentation.** Instead of rectangular
+  cut-out erasure, we mask images with irregular *elliptic* lacunae that
+  approximate real manuscript damage (flaking, humidity, worm holes).
+  Implemented as `RandomLacunae` in [`source.py`](source.py).
+- **DSCL — Dynamically similarity-weighted Supervised Contrastive Loss.** A
+  supervised contrastive loss whose negative pairs are re-weighted by a
+  dynamically re-estimated inter-class similarity matrix, so visually similar
+  letters (e.g. Alpha/Lambda) are not pushed apart as hard as unrelated ones.
+  Implemented as `SimilarityWeightedSupConLoss` in [`source.py`](source.py),
+  with weight `w_ia = 1 + λ · S_{y_i,y_a} / S̄`.
 
-## Quick Start
+The best model in the paper is **ResNet18, pre-trained and fine-tuned, with
+LF + DSCL**, which attains 0.83 accuracy/F1 on Hell-Char and produces embeddings
+that cluster by letter far better than PCA or generic pre-trained features.
 
-Clone the repository and enter the project directory:
+## Datasets
+
+All three datasets are character-level "cliplets" (single-letter crops),
+grayscale, with a CSV of metadata. They are provided under [`data/`](data/).
+
+| Dataset | Period | Role | Images | Classes |
+|---|---|---|---|---|
+| **Hell-Char** | 3rd–1st c. BCE | training / benchmark | 13,046 | 24 |
+| **PaLit-Char** | 2nd–5th c. CE | evaluation (near) | 384 | 24 |
+| **Med-Char** | 9th–14th c. CE | evaluation (far, diachronic shift) | 574 | 24 |
+
+Hell-Char is a curated subset of Hell-Date (Ferretti et al., 2025); PaLit-Char
+and Med-Char are newly compiled here.
+
+## Installation
 
 ```bash
 git clone https://github.com/ipavlopoulos/diachronic-greek-letterforms.git
 cd diachronic-greek-letterforms
+pip install -r requirements.txt
 ```
 
-Install the Python packages used by the notebooks and scripts:
+GPU is recommended for training; evaluation and the bundled demo run on CPU.
+Reproducing the t-SNE figure as PDF additionally needs `rsvg-convert`
+(`librsvg`), a system package.
+
+## Repository layout
+
+```
+source.py                     core library: models, LF/RE augmentation, DSCL loss, datasets, training loop
+scripts/
+  train_resnet_lf_dscl.py     ResNet18 trainer (LF/RE/none x DSCL/SCL/none, pretrained or scratch)
+  train_fcnn_variant.py       lightweight CNN (fCNN) trainer with the same options
+  train_resnet_pt_ft_ce.py    ResNet18 pre-trained + fine-tuned, cross-entropy baseline
+  train_timm_backbone.py      ViT-16S / ConvNeXt-V2 trainers (preliminary backbones, future work)
+  evaluate.py                 Hell-Char classification (Table 1) + embedding clustering (Table 2)
+  eval_diachronic.py          PaLit-Char / Med-Char generalization (Table 3)
+  reproduce_figure4.py        temporal error boxplot on Med-Char (Fig. 4)
+  reproduce_letter_century_plot.py   letter-century t-SNE map of Med-Char embeddings (Fig. 5)
+  reproduce_letter_forms.py   per-letter cluster medoids ("letter forms")
+  reproduce_confusion_similarity.py  confusion matrix + learned similarity matrix
+  create_aug3_examples.py     augmentation-vs-real-damage figure
+  extract_representations.py  export embeddings for a directory of cliplets
+models/resnet_lf_dscl/        bundled main checkpoint (ResNet18-PT+FT + LF + DSCL) + summary
+data/{hellchar,palitchar,medchar}/   cliplets + CSV per dataset
+notebooks/                    exploratory notebooks (training, clustering, demo)
+```
+
+The main model — **ResNet18-PT+FT + LF + DSCL** — is bundled at
+`models/resnet_lf_dscl/best_resnet_lf_dscl_model.pth`, and every evaluation/figure
+script uses it by default, so they run out-of-the-box without training. Newly
+trained checkpoints are written under `runs/` (git-ignored); pass `--checkpoint`
+to use one of those instead. The lightweight CNN checkpoint
+`best_cnn_letter_model.pth` is also included for the demo notebook.
+
+## Reproducing the paper
+
+Every command is run from the repository root. Training writes a checkpoint and
+a `*_summary.json` under `runs/<name>/`; point the evaluation/figure scripts at
+that checkpoint.
+
+### Table 1 — Classification on Hell-Char
+
+| Row | Command |
+|---|---|
+| fCNN | `python scripts/train_fcnn_variant.py` |
+| fCNN + RE | `python scripts/train_fcnn_variant.py --use-rectangular-erasure` |
+| fCNN + LF | `python scripts/train_fcnn_variant.py --use-lf` |
+| fCNN + LF + DSCL | `python scripts/train_fcnn_variant.py --use-lf --use-dscl` |
+| ResNet18-FT (scratch) | `python scripts/train_resnet_lf_dscl.py --no-pretrained --erasure none --no-contrastive` |
+| ResNet18-PT+FT | `python scripts/train_resnet_lf_dscl.py --erasure none --no-contrastive` |
+| ResNet18-PT+FT + SCL | `python scripts/train_resnet_lf_dscl.py --erasure none --contrastive-loss scl` |
+| **ResNet18-PT+FT + LF + DSCL** (main) | `python scripts/train_resnet_lf_dscl.py` |
+
+Then score a checkpoint (reports Accuracy and macro-F1; `--per-letter` adds the
+per-class report):
 
 ```bash
-pip install torch torchvision numpy opencv-python pillow scikit-learn matplotlib seaborn pandas jupyter ipywidgets
+python scripts/evaluate.py --backbone resnet \
+  --checkpoint models/resnet_lf_dscl/best_resnet_lf_dscl_model.pth
 ```
 
-Then open the representation demo:
+### Table 2 — Clustering of the embeddings (Hell-Char)
 
-[![Open `representation_demo.ipynb` in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ipavlopoulos/diachronic-greek-letterforms/blob/main/notebooks/representation_demo.ipynb)
+`evaluate.py` also clusters the embeddings (k-means / Spectral / Agglomerative)
+and reports NMI and ARI against the letter labels — the same command as above.
+The `Otsu+PCA` and pre-trained-only baselines are computed in
+[`notebooks/cnn_embeddings_clustering.ipynb`](notebooks/cnn_embeddings_clustering.ipynb).
+
+### Table 3 — Diachronic generalization (PaLit-Char, Med-Char)
 
 ```bash
-jupyter notebook notebooks/representation_demo.ipynb
+python scripts/eval_diachronic.py \
+  --checkpoint models/resnet_lf_dscl/best_resnet_lf_dscl_model.pth \
+  --datasets palitchar medchar
 ```
 
-GitHub's notebook preview is static and may occasionally show a rendering error for notebooks; use Colab or local Jupyter to run cells and recompute outputs. If the repository is private, Colab needs to be connected to a GitHub account with access, or the repository needs to be public.
+### Figures
 
-Or export embeddings for a directory of cliplets:
+| Figure | Command |
+|---|---|
+| Augmentation vs. real damage | `python scripts/create_aug3_examples.py` |
+| Letter forms (Alpha medoids) | `python scripts/reproduce_letter_forms.py --checkpoint models/resnet_lf_dscl/best_resnet_lf_dscl_model.pth` |
+| Temporal error boxplot (Fig. 4) | `python scripts/reproduce_figure4.py --checkpoint models/resnet_lf_dscl/best_resnet_lf_dscl_model.pth` |
+| Letter-century t-SNE (Fig. 5) | `python scripts/reproduce_letter_century_plot.py --checkpoint models/resnet_lf_dscl/best_resnet_lf_dscl_model.pth` |
+| Confusion + similarity matrices | `python scripts/reproduce_confusion_similarity.py --checkpoint models/resnet_lf_dscl/best_resnet_lf_dscl_model.pth` |
+
+The t-SNE script writes an SVG (colours run **blue = older → red = more recent**,
+with a distinct marker shape per century); convert it to PDF with
+`rsvg-convert -f pdf in.svg -o out.pdf`. The boxplot height is adjustable via
+`--fig-height` for a more compact figure.
+
+### Preliminary transformer backbones (future work)
+
+The paper notes that LF + DSCL also help ViT-16S and ConvNeXt-V2. Train them with:
+
+```bash
+python scripts/train_timm_backbone.py --model-name convnextv2_tiny --use-lf --use-dscl
+python scripts/train_timm_backbone.py --model-name vit_small_patch16_224 --use-lf --use-dscl
+```
+
+## Quick start: export embeddings
 
 ```bash
 python scripts/extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
 ```
-
-For GPU training, install the PyTorch build appropriate for your CUDA version from the official PyTorch instructions. The released checkpoint and demo run on CPU.
-
-## Repository Contents
-
-| Path | Purpose |
-| --- | --- |
-| `source.py` | Shared model definitions, losses, augmentation, datasets, training, evaluation, and representation helpers. |
-| `best_cnn_letter_model.pth` | Released `CNN2D` checkpoint for classification and representation extraction. |
-| `scripts/extract_representations.py` | Command-line CSV exporter for 512-dimensional letterform representations. |
-| `scripts/create_qualitative_examples.py` | Recreates the compact visual panel showing augmentation, confusability, cross-dataset Gamma examples, and visual variability. |
-| `scripts/reproduce_letter_century_plot.py` | Recreates the Med-Char letter-century t-SNE plot as fixed-scale SVG and HTML visualizations. |
-| `notebooks/representation_demo.ipynb` | Small guided notebook for loading the checkpoint, previewing a cliplet, extracting representations, inspecting nearest neighbors, and trying a user-uploaded image. |
-| `notebooks/Inference.ipynb` | Minimal classification example with the saved model. |
-| `notebooks/cnn_training.ipynb` | Main training workflow for the lightweight CNN with lacuna-driven augmentation and similarity-weighted supervised contrastive learning. |
-| `notebooks/resnet_training.ipynb` | ResNet-18 training workflow that regenerates `best_resnet_supcon_model.pth` from the released Hell-Char data. |
-| `notebooks/resnet18_pt_ft_standard_scl.ipynb` | ResNet18-PT+FT training workflow using standard supervised contrastive loss, without LF augmentation or DSCL weighting. |
-| `notebooks/cnn_embeddings_clustering.ipynb` | Larger exploratory notebook for embedding extraction and clustering experiments. |
-| `notebooks/data_overview.ipynb` | Quick data inventory notebook for released metadata and cliplet folders. |
-| `data/hellchar` | Hell-Char metadata and cliplets for training and in-distribution evaluation. |
-| `data/palitchar` | PaLit-Char metadata and cliplets for near-period out-of-distribution evaluation. |
-| `data/medchar` | Med-Char metadata and cliplets for later-period diachronic evaluation. |
-| `visual_artifacts/qualitative_visual_examples.png` | Generated qualitative panel used to illustrate visual challenges and examples. |
-| `visual_artifacts/letter_century_plot_resnet_reproduced.svg` | Recreated letter-century plot with fixed-size colour prototype thumbnails and red century markers. |
-| `visual_artifacts/letter_century_plot_resnet_reproduced.html` | Browser-viewable version of the recreated letter-century plot. |
-| `visual_artifacts/letter_century_plot_resnet_reproduced_300dpi.pdf` | 300 DPI PDF export of the recreated letter-century plot. |
-
-## Representation Extraction
-
-The released checkpoint can be used as a transparent letterform encoder. Each input image produces one L2-normalized 512-dimensional vector from the penultimate CNN layer.
-
-Shape guide:
-
-- one image -> embedding array with shape `(1, 512)`
-- 40 images -> embedding array with shape `(40, 512)`
-- exported CSV for 40 images -> shape `(40, 516)` because it includes 4 metadata columns plus 512 embedding columns
-
-Python example:
-
-```python
-from source import extract_letterform_representations, load_letterform_model
-
-model = load_letterform_model("best_cnn_letter_model.pth", device="cpu")
-embeddings, logits = extract_letterform_representations(
-    model,
-    ["data/palitchar/cliplets/Alpha_10352_001.jpg"],
-    device="cpu",
-    return_logits=True,
-)
-
-print(embeddings.shape)  # (1, 512)
-```
-
-CSV export example:
-
-```bash
-python scripts/extract_representations.py data/palitchar/cliplets --output palitchar_representations.csv
-```
-
-The CSV contains:
-
-- `filename`
-- `predicted_label`
-- `confidence`
-- `embedding_norm`
-- `embedding_000` through `embedding_511`
-
-For an interactive walkthrough, open `notebooks/representation_demo.ipynb`.
-
-## Classification Inference
-
-Run from the project directory:
-
-```bash
-jupyter notebook notebooks/Inference.ipynb
-```
-
-The notebook loads `best_cnn_letter_model.pth`, samples an image from `data/palitchar/cliplets`, preprocesses it to `64x64` grayscale, and predicts one of the 24 Greek letter classes.
-
-A minimal code sketch:
-
-```python
-import torch
-from source import LETTER_LABELS, extract_letterform_representations, load_letterform_model
-
-model = load_letterform_model("best_cnn_letter_model.pth", device="cpu")
-embeddings, logits = extract_letterform_representations(
-    model,
-    ["data/palitchar/cliplets/Alpha_10352_001.jpg"],
-    device="cpu",
-    return_logits=True,
-)
-
-probabilities = torch.softmax(torch.tensor(logits), dim=1)
-predicted_index = int(probabilities.argmax(dim=1)[0])
-print(LETTER_LABELS[predicted_index])
-```
-
-## Training Workflow
-
-The main path for the released lightweight CNN is `notebooks/cnn_training.ipynb`:
-
-1. Load Hell-Char cliplets and metadata from `data/hellchar`.
-2. Preprocess images to normalized `64x64` grayscale arrays.
-3. Split known-letter samples into train, validation, and test partitions.
-4. Train `CNN2D` using cross-entropy plus optional similarity-weighted supervised contrastive loss.
-5. Update the class similarity matrix from learned class prototypes.
-6. Evaluate with classification reports and confusion matrices.
-
-The core training function is `train_cnn2d` in `source.py`.
-
-For ResNet-18 reproduction, use `notebooks/resnet_training.ipynb`. It reuses the same
-Hell-Char split, lacuna-style augmentation, similarity-weighted supervised
-contrastive objective, and evaluation function, then saves
-`best_resnet_supcon_model.pth`. The ResNet checkpoint is not included in the
-repository, so this notebook is the reproducible path for regenerating it.
-
-For the ResNet18-PT+FT baseline with standard SCL only, use
-`notebooks/resnet18_pt_ft_standard_scl.ipynb`. This notebook fine-tunes all
-pretrained ResNet-18 layers with cross-entropy plus standard supervised
-contrastive loss, while deliberately disabling LF augmentation and DSCL
-class-similarity weighting.
-
-## Method Summary
-
-The model learns both class predictions and a 512-dimensional embedding for each letter image. It combines supervised classification with a representation-learning objective designed for visually confusable historical letterforms.
-
-The classifier is trained with:
-
-```text
-loss = cross_entropy + lambda_scl * similarity_weighted_supcon
-```
-
-The contrastive term pulls examples of the same letter together while weighting negatives according to a class-similarity matrix. That matrix can be computed dynamically from class prototypes in the current embedding space, optionally blended with expert-defined priors.
-
-The augmentation pipeline includes ordinary image perturbations and a lacunae-inspired transform, `RandomLacunae`, that masks irregular missing regions to mimic damaged manuscript surfaces.
-
-## Visual Artifacts
-
-The qualitative visual panel can be regenerated from the released cliplets:
-
-```bash
-python scripts/create_qualitative_examples.py
-```
-
-It writes `visual_artifacts/qualitative_visual_examples.png`, showing side-by-side augmentation examples, confusable forms, Gamma across datasets, and representative background/degradation variability.
-
-The Med-Char letter-century embedding plot can be regenerated after restoring or
-training the ResNet18+LF+DSCL checkpoint:
-
-```bash
-python scripts/reproduce_letter_century_plot.py --device cpu
-```
-
-It writes `visual_artifacts/letter_century_plot_resnet_reproduced.svg` and
-`visual_artifacts/letter_century_plot_resnet_reproduced.html`; a 300 DPI PDF
-export is also available as
-`visual_artifacts/letter_century_plot_resnet_reproduced_300dpi.pdf`. All
-prototype thumbnails use the same image scale, labels are offset with leader
-lines, and markers use a red colour scale where older examples are darker.
-
-## Data
-
-The release contains three letter-level datasets:
-
-- Hell-Char: training and in-distribution evaluation data derived from Hellenistic papyri.
-- PaLit-Char: near-period evaluation data from later papyri/literary witnesses.
-- Med-Char: later diachronic evaluation data from Byzantine minuscule manuscripts.
-
-The datasets have different metadata schemas:
-
-- Hell-Char: `filename`, `letter`, `TM`, `number`, `year`, `region`.
-- PaLit-Char: `filename`, `tm`, `publication`, `year_post_quem`, `year_ante_quem`, `century`.
-- Med-Char: `ID`, `uid`, `filename`, `year`, `inferred_label`, `letter`.
-
-The cliplet filenames encode the letter label and manuscript/document identifier. The notebooks derive labels and metadata from those filenames and CSV files.
-
-## Expected Input Images
-
-The model expects a cropped image containing a single Greek letterform, similar to the images in the `cliplets` directories. Grayscale and RGB files are both accepted; images are converted to grayscale and resized to `64x64`.
-
-For best results, use images with:
-
-- one isolated character,
-- minimal surrounding text,
-- enough margin that strokes are not cut off,
-- manuscript-like foreground/background contrast.
-
-Full manuscript pages should be segmented into individual letter crops before using this model.
-
-## Project State
-
-This is a research release, not a packaged Python library. The notebooks are the primary workflows, and `source.py` collects reusable components exported from those notebooks.
-
-Generated files such as `representation_demo_output.csv` are intentionally not required for running the project; they can be recreated from the demo notebook or `scripts/extract_representations.py`.
 
 ## Citation
 
-If you use this code, data, or the released letterform representations, please cite the accompanying paper, to be presented at ICDAR in Vienna:
-
-Pavlopoulos, J., Barbakos, S., Ferretti, L., Voulgarakis, D., Paparrigopoulou, A., Konstantinidou, M., De Gregorio, G., Marthot-Santaniello, I., Platanou, P., and Essler, H. Learning Diachronic Representations of Ancient Greek Letterforms. To appear/presented at ICDAR, Vienna.
-
 ```bibtex
-@inproceedings{pavlopoulos_diachronic_greek_letterforms,
+@inproceedings{pavlopoulos2026diachronic,
   title     = {Learning Diachronic Representations of Ancient Greek Letterforms},
-  author    = {Pavlopoulos, John and Barbakos, Spyros and Ferretti, Lavinia and Voulgarakis, Dionysis and Paparrigopoulou, Asimina and Konstantinidou, Maria and De Gregorio, Giuseppe and Marthot-Santaniello, Isabelle and Platanou, Paraskevi and Essler, Holger},
-  booktitle = {Proceedings of the International Conference on Document Analysis and Recognition (ICDAR)},
-  address   = {Vienna, Austria},
-  note      = {To appear},
-  url       = {https://github.com/ipavlopoulos/diachronic-greek-letterforms}
+  author    = {Pavlopoulos, John and Barbakos, Spyros and Ferretti, Lavinia and
+               Voulgarakis, Dionysis and Paparrigopoulou, Asimina and
+               Konstantinidou, Maria and De Gregorio, Giuseppe and
+               Marthot-Santaniello, Isabelle and Platanou, Paraskevi and Essler, Holger},
+  booktitle = {International Conference on Document Analysis and Recognition (ICDAR)},
+  year      = {2026}
 }
 ```
+
+## License
+
+Code and datasets are released under **CC BY 4.0** (see [`LICENSE`](LICENSE)).
+The datasets build on Hell-Date and on material from securely dated papyri and
+manuscripts; please also cite the originating resources.
