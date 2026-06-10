@@ -25,6 +25,7 @@ from torch.utils.data import DataLoader
 from source import (
     ImageDatasetAugmented,
     RandomLacunae,
+    RandomRectangles,
     ResNetClassifier,
     custom_similarity_matrix,
     train_cnn2d,
@@ -87,15 +88,26 @@ def build_loaders(args):
         stratify=y_train,
     )
 
-    data_transform = transforms.Compose([
-        transforms.RandomRotation(10),
-        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
-        transforms.RandomResizedCrop(size=(64, 64), scale=(0.8, 1.0)),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2),
-        RandomLacunae(num_lacunae=(0, 2), size_range=(0.02, 0.12), p=0.5, v=1),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,)),
-    ])
+    train_steps = []
+    if not args.no_standard_augmentation:
+        train_steps.extend([
+            transforms.RandomRotation(10),
+            transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
+            transforms.RandomResizedCrop(size=(64, 64), scale=(0.8, 1.0)),
+            transforms.ColorJitter(brightness=0.2, contrast=0.2),
+        ])
+    nlac = (args.lacuna_min, args.lacuna_max)
+    if args.erasure == "lf":
+        train_steps.append(RandomLacunae(num_lacunae=nlac, size_range=(0.02, 0.15), p=0.5, v=1))
+    if args.erasure == "rect":
+        # shape control: rectangles with the same count/area/morphology as LF
+        train_steps.append(RandomRectangles(num_lacunae=nlac, size_range=(0.02, 0.15), p=0.5, v=1))
+    train_steps.append(transforms.ToTensor())
+    if args.erasure == "re":
+        # scale max matched to LF's size_range (0.15) so the RE vs LF comparison is area-matched
+        train_steps.append(transforms.RandomErasing(p=0.5, scale=(0.02, 0.15), ratio=(0.3, 3.3), value=1.0))
+    train_steps.append(transforms.Normalize((0.5,), (0.5,)))
+    data_transform = transforms.Compose(train_steps)
     test_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,)),
@@ -159,6 +171,12 @@ def main():
     parser.add_argument("--val-size", type=float, default=0.1)
     parser.add_argument("--otsu", action="store_true")
     parser.add_argument("--no-pretrained", action="store_true")
+    parser.add_argument("--no-standard-augmentation", action="store_true")
+    parser.add_argument("--erasure", choices=["lf", "re", "rect", "none"], default="lf")
+    parser.add_argument("--lacuna-min", type=int, default=1, help="Min number of LF/rect regions.")
+    parser.add_argument("--lacuna-max", type=int, default=4, help="Max number of LF/rect regions (set 1 for single-region).")
+    parser.add_argument("--contrastive-loss", choices=["dscl", "scl"], default="dscl")
+    parser.add_argument("--no-contrastive", action="store_true")
     args = parser.parse_args()
 
     set_seed(args.seed)
@@ -186,10 +204,11 @@ def main():
         num_classes,
         num_epochs=args.epochs,
         lam_scl_weight=args.lambda_scl,
-        use_swscl=True,
-        use_tta=True,
-        tta_transform=tta_transform,
+        use_swscl=not args.no_contrastive,
+        use_tta=not args.no_contrastive,
+        tta_transform=tta_transform if not args.no_standard_augmentation else None,
         similarity_matrix_fn=custom_similarity_matrix,
+        contrastive_loss=args.contrastive_loss,
         update_S_every=3,
         patience=args.patience,
         save_path=str(checkpoint_path),
@@ -213,7 +232,14 @@ def main():
         "val_losses": val_losses,
         "val_accuracies": val_accs,
         "test_report": report,
-        "settings": vars(args),
+        "settings": {
+            **vars(args),
+            "loss": (
+                "cross_entropy"
+                if args.no_contrastive
+                else f"cross_entropy + lambda_scl * {args.contrastive_loss}"
+            ),
+        },
     }
     summary_path = args.output_dir / "resnet_lf_dscl_summary.json"
     with open(summary_path, "w") as handle:

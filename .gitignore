@@ -202,3 +202,6 @@ anacoda_projects/
 CHECKLIST.md
 .DS_Store
 representation_demo_output.csv
+
+# Local experiment scratch (not part of the released codebase)
+scripts/_scratch/
