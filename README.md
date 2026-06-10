@@ -3,7 +3,7 @@
 This repository accompanies the paper *"Learning Diachronic Representations of
 Ancient Greek Letterforms."* It contains the three Greek letter datasets
 introduced in the paper, the PyTorch implementation of our two methodological
-contributions, and the scripts that reproduce every table and figure.
+contributions, and the scripts that reproduce the main tables and figures.
 
 We study how modern representation learning captures the variation of Greek
 handwriting across more than two millennia. Two domain-driven ideas drive the
@@ -41,12 +41,14 @@ grayscale, with a CSV of metadata. They are provided under [`data/`](data/).
 
 | Dataset | Period | Role | Images | Classes |
 |---|---|---|---|---|
-| **Hell-Char** | 3rd–1st c. BCE | training / benchmark | 13,046 | 24 |
+| **Hell-Char** | 3rd–1st c. BCE | training / benchmark | 13,014 | 24 |
 | **PaLit-Char** | 2nd–5th c. CE | evaluation (near) | 384 | 24 |
 | **Med-Char** | 9th–14th c. CE | evaluation (far, diachronic shift) | 574 | 24 |
 
 Hell-Char is a curated subset of Hell-Date (Ferretti et al., 2025); PaLit-Char
-and Med-Char are newly compiled here.
+and Med-Char are newly compiled here. The full Hell-Char subset has 13,046
+cliplets; 13,014 fall in the 24 letter classes used here, the remainder forming
+a merged non-alphabetic category that is ignored.
 
 ## Installation
 
@@ -162,6 +164,8 @@ python scripts/extract_representations.py data/palitchar/cliplets --output palit
 ```
 
 ## Citation
+
+<!-- Placeholder venue/year; update with the final venue, year, pages, and DOI on publication. -->
 
 ```bibtex
 @inproceedings{pavlopoulos2026diachronic,
