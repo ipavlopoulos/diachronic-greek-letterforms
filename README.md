@@ -165,8 +165,6 @@ python scripts/extract_representations.py data/palitchar/cliplets --output palit
 
 ## Citation
 
-<!-- Placeholder venue/year; update with the final venue, year, pages, and DOI on publication. -->
-
 ```bibtex
 @inproceedings{pavlopoulos2026diachronic,
   title     = {Learning Diachronic Representations of Ancient Greek Letterforms},
